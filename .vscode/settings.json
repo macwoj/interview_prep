@@ -2,6 +2,7 @@
     "files.associations": {
         "Dockerfile*": "dockerfile",
         "memory": "cpp",
-        "unordered_map": "cpp"
+        "unordered_map": "cpp",
+        "utility": "cpp"
     }
 }

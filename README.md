@@ -20,3 +20,11 @@ Say that you are a traveler on a 2D grid. You begin in the top-left corner and y
 In how many ways can you travel to the goal on a grid with dimensions m * n?
 
 Write a function gridTraveler(m,n) that calculates this.
+
+### Brute force
+O(2^(n+m)) time complexity , n+m is the height of the tree, we split by 2 (right or down)
+O(n+m) space complexity
+
+### Memoization
+O(m*n) -> O(n) time complexity
+O(n+m) space complexity
