@@ -3,6 +3,7 @@
         "Dockerfile*": "dockerfile",
         "memory": "cpp",
         "unordered_map": "cpp",
-        "utility": "cpp"
+        "utility": "cpp",
+        "ostream": "cpp"
     }
 }
