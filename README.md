@@ -26,7 +26,7 @@ O(2^(n+m)) time complexity , n+m is the height of the tree, we split by 2 (right
 O(n+m) space complexity
 
 ### Memoization
-O(m*n) -> O(n) time complexity
+O(m*n) time complexity
 O(n+m) space complexity
 
 ## Can sum
@@ -43,3 +43,22 @@ m = target sum
 n = array length
 O(n^m) time
 O(m) space
+
+### Memoization
+O(n*m) time
+O(m) space
+
+## How sum
+Write a function howSum(targetSum, numbers) that takes in a targetSum and an array of numbers as arguments.
+The function shuold return an array containing any combination of elements that add up to exactly the targetSum. If there is no combination that adds up to the targetSum, then return null.
+If there are multiple combinations possible, you may return any single one.
+
+### Brute force
+m = target sum
+n = array length
+O(n^m * m) time, extra m comes from copying the vector
+O(m) space
+
+### Memoization
+O(n*m^2) time, extra m comes from copying the vector
+O(m^2) space, need store the results which have max value of m
