@@ -103,7 +103,73 @@ O(m^2) space, storing the best adds another m
 ### Memoization
 O(n*m^2) time, extra m comes from copying the vector
 
-O(m^2) space, need store the results which have max value of m
+O(m^2) space
+
+## Can construct
+Write a function canConstruct(target,wordBank) that accepts a target string and an array of strings.
+
+The function should return a boolean indicating whether or not the target can be constructed by concatenating elements of the wordBank array.
+
+You may reuse elements of wordBank as many times as needed.
+
+### Brute force
+m = target length
+n = array length
+
+O(n^m * m) time, extra m comes from copying the vector
+
+O(m^2) space , substr returns new string that needs to be maintainedn throughout the recursion
+
+### Memoization
+O(n*m^2) time, extra m comes from copying the string
+
+O(m^2) space
+
+## Count construct
+
+Write a function countConstruct(target,wordBank) that accepts a target string and an array of strings.
+
+The function should return the number of ways that the target can be constructed by concatenating element of the wordbank array.
+
+You may reuse elements of wordBank as many times as needed.
+
+### Special functions
+
+#### compare
+
+* https://www.cplusplus.com/reference/string/string/compare/https://www.cplusplus.com/reference/string/string/compare/
+* `int compare (size_t pos, size_t len, const string& str) const;` 
+* str
+    * Another string object, used entirely (or partially) as the comparing string.
+* pos
+    * Position of the first character in the compared string. If this is greater than the string length, it throws out_of_range. Note: The first character is denoted by a value of 0 (not 1).
+* len
+    * Length of compared string (if the string is shorter, as many characters as possible). A value of string::npos indicates all characters until the end of the string.
+* return
+    * 0	They compare equal
+
+#### substr
+* https://www.cplusplus.com/reference/string/string/substr/
+
+### Brute force
+m = target length
+n = array length
+
+O(n^m * m) time, extra m comes from copying the vector
+
+O(m^2) space , substr returns new string that needs to be maintainedn throughout the recursion
+
+### Memoization
+O(n*m^2) time, extra m comes from copying the string
+
+O(m^2) space
+
+## All construct
+Write a function allConstruct(target,wordBank) that accepts a target string and an array of strings.
+
+The function should return a 2D array containing all of the ways that the target can be constructed by concatenating elements of the wordBank array. Each element of the 2D array shold represent one combination that constructs the target.
+
+You may reuse elements of wordBank as many times as needed.
 
 # Graph algorithms
 
