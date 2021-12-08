@@ -171,6 +171,21 @@ The function should return a 2D array containing all of the ways that the target
 
 You may reuse elements of wordBank as many times as needed.
 
+### Brute force
+m = target length
+n = word bank length
+
+TODO - figure this out
+
+### Memoization
+TODO - this was the O given but need to further look into it
+
+O(n^m)
+
+O(m) space
+
+## TODO Tabulation
+
 # Graph algorithms
 
 Graph Algorithms for Technical Interviews - Full Course
