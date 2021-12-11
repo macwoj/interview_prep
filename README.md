@@ -26,6 +26,7 @@ In how many ways can you travel to the goal on a grid with dimensions m * n?
 Write a function gridTraveler(m,n) that calculates this.
 
 [Solution](dynamic_programming/grid_traveler_memoization.cpp)
+[Solution w/ string](dynamic_programming/grid_traveler_memoization_string.cpp)
 
 ### Brute force
 O(2^(n+m)) time complexity , n+m is the height of the tree, we split by 2 (right or down)
@@ -112,6 +113,8 @@ The function should return a boolean indicating whether or not the target can be
 
 You may reuse elements of wordBank as many times as needed.
 
+[Solution](dynamic_programming/canconstruct_memoization.cpp)
+
 ### Brute force
 m = target length
 n = array length
@@ -132,6 +135,8 @@ Write a function countConstruct(target,wordBank) that accepts a target string an
 The function should return the number of ways that the target can be constructed by concatenating element of the wordbank array.
 
 You may reuse elements of wordBank as many times as needed.
+
+[Solution](dynamic_programming/countconstruct_memoization.cpp)
 
 ### Special functions
 
@@ -171,6 +176,8 @@ The function should return a 2D array containing all of the ways that the target
 
 You may reuse elements of wordBank as many times as needed.
 
+[Solution](dynamic_programming/allconstruct_memoization.cpp)
+
 ### Brute force
 m = target length
 n = word bank length
@@ -188,8 +195,7 @@ O(m) space
 
 # Graph algorithms
 
-Graph Algorithms for Technical Interviews - Full Course
-https://youtu.be/tWVWeAqZ0WU
-
-Algorithms Course - Graph Theory Tutorial from a Google Engineer
-https://youtu.be/09_LlHjoEiY
+* Graph Algorithms for Technical Interviews - Full Course
+    * https://youtu.be/tWVWeAqZ0WU
+* Algorithms Course - Graph Theory Tutorial from a Google Engineer
+    * https://youtu.be/09_LlHjoEiY

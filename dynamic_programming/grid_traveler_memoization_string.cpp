@@ -1,25 +1,26 @@
+
 #include <iostream>
 #include <unordered_map>
 #include <memory>
 #include <utility>
+#include <string>
 
 using namespace std;
 
+
 using intT = unsigned long long;
-using keyT = pair<intT,intT>;
-
-struct pair_hash {
-    size_t operator()(const keyT& p) const {
-        return hash<intT>{}(p.first) ^ hash<intT>{}(p.second);
-    }
-};
-
-using mapT = unordered_map<keyT,intT,pair_hash>;
+using pairT = pair<intT,intT>;
+using mapT = unordered_map<string,intT>;
 using map_pT = shared_ptr<mapT>;
+
+string get_key(const intT& m,const intT& n) {
+    return to_string(m) + string(",") + to_string(n);
+}
+
 
 intT gridTraveler(intT m, intT n, map_pT memo=make_shared<mapT>())
 {
-    auto key = make_pair(m,n);
+    auto key = get_key(m,n);
     auto it = memo->find(key);
     if (it!=memo->end()) return it->second;
     if (m == 0 || n == 0)
