@@ -22,6 +22,8 @@ int longestSubsequence(string a, string b,size_t i=0, size_t j=0,
         return 0;
     auto it = memo->find({i,j});
     if (it != memo->end()) {
+        // auto [x,y] = it->first;
+        // cout << "Found " << x << "," << y << " " << it->second << endl;
         return it->second;
     }
     if (a[i] == b[j]) {

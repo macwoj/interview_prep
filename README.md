@@ -1,3 +1,4 @@
+- [To know](#to-know)
 - [Special functions](#special-functions)
   - [compare](#compare)
   - [substr](#substr)
@@ -43,6 +44,38 @@
 - [Linked Lists](#linked-lists)
   - [reverse list](#reverse-list)
   - [zipper lists](#zipper-lists)
+- [Binary tree](#binary-tree)
+- [CareerCup Financial Software Developer Interview Questions](#careercup-financial-software-developer-interview-questions)
+- [geeksforgeeks](#geeksforgeeks)
+  - [Maximum size square Sub-Matrix with sum less than or equals to K](#maximum-size-square-sub-matrix-with-sum-less-than-or-equals-to-k)
+- [Questions](#questions)
+- [Resources](#resources)
+
+# To know
+* https://www.geeksforgeeks.org/top-10-algorithms-in-interview-questions/
+* data structures
+  * linked lists
+  * trees
+  * tries
+  * graphs
+  * stacks
+  * queues
+  * heaps
+  * vector
+  * hash table
+* algorithms
+  * breadth-first seach
+  * depth-first search
+  * binary search
+  * merge sort
+  * quick sort
+  * Greedy Algorithms
+  * Cummulative algorithms
+* concepts
+  * Big O time
+  * Big O space
+  * recursion
+  * memoization/dynamic programming
 
 # Special functions
 
@@ -138,7 +171,7 @@ O(m) space
 ## How sum
 Write a function howSum(targetSum, numbers) that takes in a targetSum and an array of numbers as arguments.
 
-The function shuold return an array containing any combination of elements that add up to exactly the targetSum. If there is no combination that adds up to the targetSum, then return null.
+The function should return an array containing any combination of elements that add up to exactly the targetSum. If there is no combination that adds up to the targetSum, then return null.
 
 If there are multiple combinations possible, you may return any single one.
 
@@ -396,3 +429,40 @@ Space: O(n)
 * [cpp](linked_list/zipperlists.cpp)
 * m - length of list 1, n - length of list 2
 * Time O(min(m,n)) Space O(1)
+
+# Binary tree
+* https://youtu.be/fAAZixBzIAI
+* tree sum
+  * Write a function, treeSum, that takes in the root of a binary tree that contains number values. The function should return the total sum of all values in the tree.
+  * https://structy.net/problems/tree-sum
+  * [treesum.cpp](binarytree/treesum.cpp)
+* Min value
+  * Write a function, treeMinValue, that takes in a pointer to the root of a binary tree that contains number values. The function should return the minimum value within the tree.
+  * https://structy.net/problems/tree-min-value
+  * [minvalue.cpp](binarytree/minvalue.cpp)
+* max root to leaf path sum
+  * Write a function, maxPathSum, that takes in a pointer to the root of a binary tree that contains number values. The function should return the maximum sum of any root to leaf path within the tree. You may assume that the input tree is non-empty.
+  * https://structy.net/problems/max-root-to-leaf-path-sum
+  * [maxroottoleafpathsum.cpp](binarytree/maxroottoleafpathsum.cpp)
+
+# CareerCup Financial Software Developer Interview Questions 
+* https://www.careercup.com/page?pid=financial-software-developer-interview-questions
+*  Given a string find biggest palindrome substring. For example for given string "AABCDCBA" output should be "ABCDCBA" and for given string "DEFABCBAYT" output should be "ABCBA".
+   *  [biggestPalindromeSubstring](code/biggestPalindromeSubstring.cpp)
+   *  biggestPalindrome - the first implementation does more. It can handle AABQCSDCBA and still give ABCDCBA. It does have a time complexity of O(2^N/2) and space of O(N)
+   *  biggestPalindromeSubstring - O(N^2) space O(1)
+
+# geeksforgeeks
+## Maximum size square Sub-Matrix with sum less than or equals to K
+* Given a square grid of integers and an integer value, maxSum, determine the maximum size of the square sub-grid where for all such sub-grids, the sum of all its elements' values is less than or equal to the value maxSum.
+* https://www.geeksforgeeks.org/maximum-size-square-sub-matrix-with-sum-less-than-or-equals-to-k/
+* https://www.geeksforgeeks.org/prefix-sum-2d-array/
+* [largestSubgrid.cpp](code/largestSubgrid.cpp)
+
+# Questions
+* https://leetcode.com/discuss/interview-question/900369/bloomberg-onsite-top-k-stocks
+  * [topkstocks.cpp](code/topkstocks.cpp)
+
+# Resources
+* https://github.com/jwasham/coding-interview-university
+* Ace the Trading Systems Developer Interview
