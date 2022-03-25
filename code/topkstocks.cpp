@@ -17,7 +17,7 @@ void addStocksVolume(string stockSymbol, int volume) {
         auto [itVol,_] = volumes.insert({volume,stockSymbol});
         stocks.insert({stockSymbol,itVol});
     } else {
-        auto [vol,_] = *it->second;
+        auto vol = get<0>(*it->second);
         volumes.erase(it->second);
         auto [newIt,__] = volumes.insert({vol+volume,stockSymbol});
         it->second = newIt;
@@ -25,7 +25,8 @@ void addStocksVolume(string stockSymbol, int volume) {
 }
 
 void topKstocks(int k) {
-    for (auto it=volumes.rbegin();it!=volumes.rend();it++) {
+    int i=0;
+    for (auto it=volumes.rbegin();it!=volumes.rend() && i<k;it++,i++) {
         auto [volume,ticker] = *it;
         cout << ticker << " " << volume << endl;
     }

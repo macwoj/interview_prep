@@ -49,6 +49,8 @@
 - [geeksforgeeks](#geeksforgeeks)
   - [Maximum size square Sub-Matrix with sum less than or equals to K](#maximum-size-square-sub-matrix-with-sum-less-than-or-equals-to-k)
 - [Questions](#questions)
+- [SQL](#sql)
+- [Exponent Cheat Sheet](#exponent-cheat-sheet)
 - [Resources](#resources)
 
 # To know
@@ -71,6 +73,7 @@
   * quick sort
   * Greedy Algorithms
   * Cummulative algorithms
+    * [largestSubgrid.cpp](code/largestSubgrid.cpp)
 * concepts
   * Big O time
   * Big O space
@@ -462,6 +465,22 @@ Space: O(n)
 # Questions
 * https://leetcode.com/discuss/interview-question/900369/bloomberg-onsite-top-k-stocks
   * [topkstocks.cpp](code/topkstocks.cpp)
+* LRU cache
+  * [lrucache](code/lrucache.cpp)
+* sort each level of binary tree
+  * [sortlevel.cpp](binarytree/sortlevel.cpp)
+* SPSC queue
+  * [psc_queue.cpp](code/spsc_queue.cpp)
+* Limit order book
+  * [limitorderbook.cpp](code/limitorderbook.cpp)
+* return level order traversal of binary tree
+# SQL
+* mysql setup
+  * https://towardsdatascience.com/how-to-run-mysql-using-docker-ed4cebcd90e4
+* https://www.techbeamers.com/sql-query-questions-answers-for-practice/
+
+# Exponent Cheat Sheet
+* https://blog.tryexponent.com/software-engineer-interview-cheat-sheet/
 
 # Resources
 * https://github.com/jwasham/coding-interview-university
