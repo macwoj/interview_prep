@@ -470,10 +470,11 @@ Space: O(n)
 * sort each level of binary tree
   * [sortlevel.cpp](binarytree/sortlevel.cpp)
 * SPSC queue
-  * [psc_queue.cpp](code/spsc_queue.cpp)
+  * [spsc_queue.cpp](code/spsc_queue.cpp)
 * Limit order book
   * [limitorderbook.cpp](code/limitorderbook.cpp)
 * return level order traversal of binary tree
+  * [sortlevel.cpp](binarytree/sortlevel.cpp)
 # SQL
 * mysql setup
   * https://towardsdatascience.com/how-to-run-mysql-using-docker-ed4cebcd90e4
