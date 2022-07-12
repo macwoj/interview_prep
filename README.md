@@ -1,9 +1,14 @@
+- [Daily practice](#daily-practice)
 - [To know](#to-know)
-- [Special functions](#special-functions)
-  - [compare](#compare)
-  - [substr](#substr)
-  - [find](#find)
+- [C++](#c)
+  - [string](#string)
+    - [compare](#compare)
+    - [substr](#substr)
+    - [find](#find)
+  - [map](#map)
+    - [lower_bound/upper_bound/equal_range](#lower_boundupper_boundequal_range)
 - [Dynamic Programming](#dynamic-programming)
+  - [Dynamic Programming - Learn to Solve Algorithmic Problems & Coding Challenges](#dynamic-programming---learn-to-solve-algorithmic-problems--coding-challenges)
   - [Fibonacci](#fibonacci)
     - [Brute force](#brute-force)
     - [Memoization](#memoization)
@@ -29,8 +34,8 @@
     - [Brute force](#brute-force-7)
     - [Memoization](#memoization-7)
   - [TODO Tabulation](#todo-tabulation)
-- [Top 20 Dynamic Programming Interview Questions](#top-20-dynamic-programming-interview-questions)
-  - [Longest Common Subsequence](#longest-common-subsequence)
+  - [Top 20 Dynamic Programming Interview Questions](#top-20-dynamic-programming-interview-questions)
+    - [Longest Common Subsequence](#longest-common-subsequence)
 - [Graph algorithms](#graph-algorithms)
   - [Depth first print](#depth-first-print)
   - [Breadth first print](#breadth-first-print)
@@ -53,11 +58,23 @@
 - [Exponent Cheat Sheet](#exponent-cheat-sheet)
 - [Resources](#resources)
 
+# Daily practice
+* LRU cache
+  * [lrucache](code/lrucache.cpp)
+* SPSC queue
+  * [spsc_queue.cpp](code/spsc_queue.cpp)
+* Limit order book
+  * [limitorderbook.cpp](code/limitorderbook.cpp)
+
 # To know
 * https://www.geeksforgeeks.org/top-10-algorithms-in-interview-questions/
 * data structures
+  * arrays, linked lists, stacks, queues, hash-sets, hash-maps, hash-tables, dictionary, trees and binary trees, heaps and graphs.
   * linked lists
   * trees
+    * Binary trees
+      * each level has 2^L nodes. Start at 0.
+      * total nodes for complete tree is 2^D-1. Start at 1.
   * tries
   * graphs
   * stacks
@@ -65,25 +82,45 @@
   * heaps
   * vector
   * hash table
+* Sorting
+  * common sorting functions and on what kind of input data they’re efficient on or not. Think about efficiency means in terms of runtime and space used. For example, in exceptional cases insertion-sort or radix-sort are much better than the generic QuickSort/MergeSort/HeapSort answers.
+  * merge sort
+    * [sort/merge_sort.cpp][sort/merge_sort.cpp]
+  * quick sort 
+  * https://www.interviewcake.com/sorting-algorithm-cheat-sheet
 * algorithms
+  * sorting (plus searching and binary search), divide-and-conquer, dynamic programming/memoization, greediness,recursion or algorithms linked to a specific data structure. Know Big-O notations (e.g. run time) and be ready to discuss complex algorithms like Dijkstra and A*.
   * breadth-first seach
   * depth-first search
   * binary search
-  * merge sort
-  * quick sort
   * Greedy Algorithms
   * Cummulative algorithms
     * [largestSubgrid.cpp](code/largestSubgrid.cpp)
+  * Backtracking algorithms
+    * https://www.geeksforgeeks.org/backtracking-introduction/
+      * Q4_12_Paths_with_Sum
+      * backtracking and prefix sum
+        * https://youtu.be/ofMqFAFVcKY
+        * Prefix sum
+        * https://www.geeksforgeeks.org/prefix-sum-array-implementation-applications-competitive-programming/
+        * store each result in a map
+        * to find zero sum find the same sum that we are currenlty on
+        * to find specific sum, find current-sum, this works since we are keeping the running sum and looking up if anypath that we previously seen will have is the sum
+  * Sliding window algorithms
+* mathematics
+  * the essentials of elementary probability theory and combinatorics. You should be familiar with n-choose-k problems and their ilk.
+* Graphs
+  * Graphs: Consider if a problem can be applied with graph algorithms like distance, search, connectivity,cycle-detection, etc. There are three basic ways to represent a graph in memory (objects and pointers, matrix, and adjacency list) — familiarize yourself with each representation and its pros and cons. You should know the basic graph traversal algorithms, breadth-first search and depth-first search. Know their computational complexity, their tradeoffs and how to implement them in real code.
 * concepts
   * Big O time
   * Big O space
   * recursion
   * memoization/dynamic programming
-
-# Special functions
-
-## compare
-
+* Operating Systems: You should understand processes, threads, concurrency issues, locks, mutexes, semaphores, monitors and how they all work. Understand deadlock, livelock and how to avoid them. Know what resources a process needs and a thread needs. Understand how context switching works, how it's initiated by the operating system and underlying hardware. Know a little about scheduling. We are rapidly moving towards multi-core, so know the fundamentals of "modern" concurrency constructs.
+* System Design: System design questions are used to assess a candidate's ability to combine knowledge, theory, experience and judgement toward solving a real-world engineering problem. Sample topics include features sets, interfaces, class hierarchies, distributed systems, designing a system under certain constraints, simplicity, limitations, robustness and tradeoffs. You should also have an understanding of how the internet actually works and be familiar with the various pieces (routers, domain name servers, load balancers, firewalls, etc.). For information on system design, check out our research on distributed systems and parallel computing.
+# C++
+## string
+### compare
 * https://www.cplusplus.com/reference/string/string/compare/
 * `int compare (size_t pos, size_t len, const string& str) const;` 
 * str
@@ -95,20 +132,58 @@
 * return
     * 0	They compare equal
 
-## substr
+### substr
 * https://www.cplusplus.com/reference/string/string/substr/
 * `string substr (size_t pos = 0, size_t len = npos) const;`
 * pos - Position of the first character to be copied as a substring.
 * len - Number of characters to include in the substring, string::npos indicates all characters until the end of the string.
 
-## find
+### find
 * https://www.cplusplus.com/reference/string/string/find/
 * `size_t find (const string& str, size_t pos = 0) const;`
 * pos - Position of the first character in the string to be considered in the search.
 * return - The position of the first character of the first match. If no matches were found, the function returns string::npos.
 
+## map
+### lower_bound/upper_bound/equal_range
+* `lower_bound` - returns an iterator pointing to the first element in the range [first, last) that is not less than (i.e. greater or equal to) value, or last if no such element is found.
+  * index j such that value <= arr[j] and arr[j] is the smallest possible value
+* `upper_bound` - returns an iterator pointing to the first element in the range [first, last) that is greater than value, or last if no such element is found.
+  * value >= arr[j] and arr[j] is the largest possible value.
+  * Here we need to --it for this to be true after callung `upper_bound`
+* `equal_range` - pair::first is the lower bound of the range (the same as lower_bound), and pair::second is the upper bound (the same as upper_bound)
+```C++
+// map::lower_bound/upper_bound
+#include <iostream>
+#include <map>
+
+int main ()
+{
+  std::map<char,int> mymap;
+  std::map<char,int>::iterator itlow,itup;
+
+  mymap['a']=20;
+  mymap['b']=40;
+  mymap['c']=60;
+  mymap['d']=80;
+  mymap['e']=100;
+
+  itlow=mymap.lower_bound ('b');  // itlow points to b
+  itup=mymap.upper_bound ('d');   // itup points to e (not d!)
+
+  mymap.erase(itlow,itup);        // erases [itlow,itup)
+
+  // print content:
+  for (std::map<char,int>::iterator it=mymap.begin(); it!=mymap.end(); ++it)
+    std::cout << it->first << " => " << it->second << '\n';
+
+  return 0;
+}
+```
+
 # Dynamic Programming
-* https://youtu.be/oBt53YbR9Kk
+## Dynamic Programming - Learn to Solve Algorithmic Problems & Coding Challenges
+  * https://youtu.be/oBt53YbR9Kk
 
 ## Fibonacci
 Write a function fib(n) that takes in a number as an argument. The function should return the n-th number of the Fibonacci sequence.
@@ -284,10 +359,10 @@ O(m) space
 
 ## TODO Tabulation
 
-# Top 20 Dynamic Programming Interview Questions
+## Top 20 Dynamic Programming Interview Questions
 * https://www.geeksforgeeks.org/top-20-dynamic-programming-interview-questions/
 
-## Longest Common Subsequence
+### Longest Common Subsequence
 * https://www.geeksforgeeks.org/longest-common-subsequence-dp-4/
 * LCS Problem Statement: Given two sequences, find the length of longest subsequence present in both of them. A subsequence is a sequence that appears in the same relative order, but not necessarily contiguous. For example, “abc”, “abg”, “bdf”, “aeg”, ‘”acefg”, .. etc are subsequences of “abcdefg”. 
 * [cpp](dynamic_programming/longest_common_subsequence.cpp)
@@ -297,10 +372,16 @@ O(m) space
     * Space O(mn)
 
 # Graph algorithms
-
+* Representations
+  * https://www.geeksforgeeks.org/graph-and-its-representations/
+  * adjacency list preffered
+    * unordered_map<key,vector<key>>
+    * for each node keep track of the edges
+  * adjacency matrix
+* topologicalSort
+  * Q4_07_Build_Order
 * Graph Algorithms for Technical Interviews - Full Course
-    * https://youtu.be/tWVWeAqZ0WU
-    * need adjacency list
+  * https://youtu.be/tWVWeAqZ0WU
 
 ## Depth first print
 * need to use at for a const unordered_map
@@ -467,6 +548,14 @@ Space: O(n)
   * [topkstocks.cpp](code/topkstocks.cpp)
 * LRU cache
   * [lrucache](code/lrucache.cpp)
+* rate limiter
+  * Design a logger system that receives a stream of messages along with their timestamps. Each unique message should only be printed at most every 10 seconds (i.e. a message printed at timestamp t will prevent other identical messages from being printed until timestamp t + 10).
+  * [loggerratelimit.cpp](code/loggerratelimit.cpp)
+* autocomplete system
+  * Design a search autocomplete system for a search engine. Users may input a sentence (at least one word and end with a special character '#'). You are given a string array sentences and an integer array times both of length n where sentences[i] is a previously typed sentence and times[i] is the corresponding number of times the sentence was typed. For each input character except '#', return the top 3 historical hot sentences that have the same prefix as the part of the sentence already typed.
+  * [autocomplete.cpp](code/autocomplete.cpp)
+* Serialize and Deserialize Binary Tree
+  * [serializetree.cpp](code/serializetree.cpp)
 * sort each level of binary tree
   * [sortlevel.cpp](binarytree/sortlevel.cpp)
 * SPSC queue
@@ -476,6 +565,7 @@ Space: O(n)
 * return level order traversal of binary tree
   * [sortlevel.cpp](binarytree/sortlevel.cpp)
 # SQL
+* https://www.datacamp.com/blog/sql-basics-cheat-sheet
 * mysql setup
   * https://towardsdatascience.com/how-to-run-mysql-using-docker-ed4cebcd90e4
 * https://www.techbeamers.com/sql-query-questions-answers-for-practice/
