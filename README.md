@@ -564,6 +564,39 @@ Space: O(n)
   * [limitorderbook.cpp](code/limitorderbook.cpp)
 * return level order traversal of binary tree
   * [sortlevel.cpp](binarytree/sortlevel.cpp)
+* Implement the RandomizedSet class:
+  * RandomizedSet() Initializes the RandomizedSet object.
+  * bool insert(int val) Inserts an item val into the set if not present. Returns true if the item was not present, false otherwise.
+  * bool remove(int val) Removes an item val from the set if present. Returns true if the item was present, false otherwise.
+  * int getRandom() Returns a random element from the current set of elements (it's guaranteed that at least one element exists when this method is called). Each element must have the same probability of being returned.
+  * You must implement the functions of the class such that each function works in average O(1) time complexity.
+* Longest Substring with At Most Two Distinct Characters
+  * Given a string s, return the length of the longest substring that contains at most two distinct characters.
+  * [longsubwith2.cpp](array/longsubwith2.cpp)
+* Read N Characters Given Read4 II - Call multiple times
+   * Given a file and assume that you can only read the file using a given method read4, implement a method read to read n characters. Your method read may be called multiple times. The API read4 reads four consecutive characters from file, then writes those characters into the buffer array buf4.
+   * [read4](array/read4.cpp)
+* Missing Ranges
+  * You are given an inclusive range [lower, upper] and a sorted unique integer array nums, where all elements are in the inclusive range. Return the smallest sorted list of ranges that cover every missing number exactly. That is, no element of nums is in any of the ranges, and each missing number is in one of the ranges.
+  * [missingrange](array/missingrange.cpp)
+* Min stack
+  * Design a stack that supports push, pop, top, and retrieving the minimum element in constant time. Implement the MinStack class:
+  * MinStack() initializes the stack object.
+  * void push(int val) pushes the element val onto the stack.
+  * void pop() removes the element on the top of the stack.
+  * int top() gets the top element of the stack.
+  * int getMin() retrieves the minimum element in the stack.
+  * You must implement a solution with O(1) time complexity for each function.
+  * [minstack](code/minstack.cpp)
+* Android Unlock Patterns
+  * Android devices have a special lock screen with a 3 x 3 grid of dots. Users can set an "unlock pattern" by connecting the dots in a specific sequence
+  * adjacent and knight moves are possible
+  * up/down/diagnal 2 moves are possilbe only if middle filled in
+  * Given two integers m and n, return the number of unique and valid unlock patterns of the Android grid lock screen that consist of at least m keys and at most n keys.
+  * [android](code/android.cpp)
+* Strobogrammatic Number II
+  * Given an integer n, return all the strobogrammatic numbers that are of length n. You may return the answer in any order. A strobogrammatic number is a number that looks the same when rotated 180 degrees (looked at upside down).
+  * [strobogrammatic](code/strobogrammatic.cpp)
 # SQL
 * https://www.datacamp.com/blog/sql-basics-cheat-sheet
 * mysql setup
