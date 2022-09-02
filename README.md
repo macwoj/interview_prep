@@ -146,11 +146,13 @@
 
 ## map
 ### lower_bound/upper_bound/equal_range
-* `lower_bound` - returns an iterator pointing to the first element in the range [first, last) that is not less than (i.e. greater or equal to) value, or last if no such element is found.
+* `lower_bound` - returns an iterator pointing to the first element in the range [first, last) that is greater or equal to (not less) value, or last if no such element is found.
   * index j such that value <= arr[j] and arr[j] is the smallest possible value
+  * {1,2,3,4,6,7} lower_bound(5)=6 lower_bound(6)=6
 * `upper_bound` - returns an iterator pointing to the first element in the range [first, last) that is greater than value, or last if no such element is found.
-  * value >= arr[j] and arr[j] is the largest possible value.
-  * Here we need to --it for this to be true after callung `upper_bound`
+  * index j such that value < arr[j]
+  * to get to value >= arr[j] and arr[j] is the largest possible value, we need to --it for this to be true after calling `upper_bound`
+  * {1,2,3,4,6,7} upper_bound(5)=6 upper_bound(6)=7
 * `equal_range` - pair::first is the lower bound of the range (the same as lower_bound), and pair::second is the upper bound (the same as upper_bound)
 ```C++
 // map::lower_bound/upper_bound
@@ -597,6 +599,15 @@ Space: O(n)
 * Strobogrammatic Number II
   * Given an integer n, return all the strobogrammatic numbers that are of length n. You may return the answer in any order. A strobogrammatic number is a number that looks the same when rotated 180 degrees (looked at upside down).
   * [strobogrammatic](code/strobogrammatic.cpp)
+* Sentence Screen Fitting
+  * Given a rows x cols screen and a sentence represented as a list of strings, return the number of times the given sentence can be fitted on the screen.
+  * [screenfit.cpp](dynamic_programming/screenfit.cpp)
+* Employee Free Time
+  * We are given a list schedule of employees, which represents the working time for each employee.We are given a list schedule of employees, which represents the working time for each employee.
+  * Each employee has a list of non-overlapping Intervals, and these intervals are in sorted order. Return the list of finite intervals representing common, positive-length free time for all employees, also in sorted order.
+  * [empfree.cpp](array/empfree.cpp)
+* Database
+  * [database.cpp](code/database.cpp)
 # SQL
 * https://www.datacamp.com/blog/sql-basics-cheat-sheet
 * mysql setup

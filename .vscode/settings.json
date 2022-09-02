@@ -28,6 +28,7 @@
         "streambuf": "cpp",
         "string_view": "cpp",
         "type_traits": "cpp",
-        "map": "cpp"
+        "map": "cpp",
+        "set": "cpp"
     }
 }
