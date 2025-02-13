@@ -64,6 +64,9 @@
   * [lrucache](code/lrucache.cpp)
 * SPSC queue
   * [spsc_queue.cpp](code/spsc_queue.cpp)
+  * https://www.boost.org/doc/libs/1_54_0/boost/lockfree/spsc_queue.hpp
+  * https://github.com/rigtorp/SPSCQueue
+  * https://gist.github.com/lc0305/6b03c8810811669eedea152708f4f03e
 * Limit order book
   * [limitorderbook.cpp](code/limitorderbook.cpp)
 
