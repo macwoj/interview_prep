@@ -171,6 +171,10 @@ set<int> intersect(const set<int>& a,const set<int>& b) {
 ```
 
 ## queue
+
+- instered at back
+- poped at front
+- 
 ```C++
 queue<int> q;
 q.push(10);
