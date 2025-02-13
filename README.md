@@ -122,7 +122,7 @@
   * memoization/dynamic programming
 * Operating Systems: You should understand processes, threads, concurrency issues, locks, mutexes, semaphores, monitors and how they all work. Understand deadlock, livelock and how to avoid them. Know what resources a process needs and a thread needs. Understand how context switching works, how it's initiated by the operating system and underlying hardware. Know a little about scheduling. We are rapidly moving towards multi-core, so know the fundamentals of "modern" concurrency constructs.
 * System Design: System design questions are used to assess a candidate's ability to combine knowledge, theory, experience and judgement toward solving a real-world engineering problem. Sample topics include features sets, interfaces, class hierarchies, distributed systems, designing a system under certain constraints, simplicity, limitations, robustness and tradeoffs. You should also have an understanding of how the internet actually works and be familiar with the various pieces (routers, domain name servers, load balancers, firewalls, etc.). For information on system design, check out our research on distributed systems and parallel computing.
-# C++
+# C++ Reference
 ## string
 ### compare
 * https://www.cplusplus.com/reference/string/string/compare/
@@ -158,6 +158,18 @@
   * to get to value >= arr[j] and arr[j] is the largest possible value, we need to --it for this to be true after calling `upper_bound`
   * {1,2,3,4,6,7} upper_bound(5)=6 upper_bound(6)=7
 * `equal_range` - pair::first is the lower bound of the range (the same as lower_bound), and pair::second is the upper bound (the same as upper_bound)
+
+## unordered_map
+```C++
+std::unordered_map<int,double> mymap;
+auto it = mymap.find (key);
+if ( got == mymap.end() )
+  cout << "Not found";
+//key
+it->first
+//value
+it->second;
+```
 
 ## set
 ```C++
