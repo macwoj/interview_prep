@@ -159,14 +159,26 @@
   * {1,2,3,4,6,7} upper_bound(5)=6 upper_bound(6)=7
 * `equal_range` - pair::first is the lower bound of the range (the same as lower_bound), and pair::second is the upper bound (the same as upper_bound)
 
-## set_intersection
+## set
+
+### set_intersection
 ```C++
 set<int> intersect(const set<int>& a,const set<int>& b) {
   set<int> intersect;
   set_intersection(a.begin(),a.end(),b.begin(),b.end(),std::inserter(intersect, intersect.begin()));
   return intersect;
 }
+```
 
+## queue
+```C++
+queue<int> q;
+q.push(10);
+q.size();
+q.empty();
+q.front();
+q.back();
+q.pop();
 ```
 
 # Dynamic Programming
