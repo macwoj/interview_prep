@@ -160,6 +160,15 @@
 * `equal_range` - pair::first is the lower bound of the range (the same as lower_bound), and pair::second is the upper bound (the same as upper_bound)
 
 ## set
+```C++
+std::set<int> myset;
+auto ret = myset.insert(20);
+//iterator to the element
+ret.first
+
+//bool -> true was inserted, false - not inserted prev value returned
+ret.second
+```
 
 ### set_intersection
 ```C++
