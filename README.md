@@ -144,17 +144,16 @@ set<int> intersect(const set<int>& a,const set<int>& b) {
 
 ## queue
 
-- instered at back
+- inserted at back
 - poped at front
-- 
 ```C++
 queue<int> q;
-q.push(10);
+q.push(10); //at back
 q.size();
 q.empty();
 q.front();
 q.back();
-q.pop();
+q.pop(); //at front
 ```
 
 # Dynamic Programming
