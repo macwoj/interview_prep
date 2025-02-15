@@ -156,6 +156,52 @@ q.back();
 q.pop(); //at front
 ```
 
+## C++ Threading
+
+### Thread-safe queue that blocks for non-full/non-empty
+```C++
+class BoundedBlockingQueue {
+    int capacity_;
+    queue<int> q_;
+    mutex mtx_;
+    condition_variable wait_;
+
+public:
+    BoundedBlockingQueue(int capacity) : capacity_(capacity) {}
+
+    void enqueue(int element) {
+        unique_lock<mutex> lock(mtx_);
+        // wait until not full
+        wait_.wait(lock, [this] { return q_.size() < capacity_; });
+        // lock is aquired
+        q_.push(element);
+        // unlocking before notifying, to avoid waking up waiting thread only to
+        // block again
+        lock.unlock();
+        wait_.notify_one();
+    }
+
+    int dequeue() {
+        unique_lock<mutex> lock(mtx_);
+        // wait until not empty
+        wait_.wait(lock, [this] { return q_.size() > 0; });
+        // lock is aquired
+        auto res = q_.front();
+        q_.pop();
+        // unlocking before notifying, to avoid waking up waiting thread only to
+        // block again
+        lock.unlock();
+        wait_.notify_one();
+        return res;
+    }
+
+    int size() {
+        lock_guard<mutex> lock(mtx_);
+        return q_.size();
+    }
+};
+```
+
 # Dynamic Programming
 ## Dynamic Programming - Learn to Solve Algorithmic Problems & Coding Challenges
   * https://youtu.be/oBt53YbR9Kk
