@@ -202,6 +202,37 @@ public:
 };
 ```
 
+### Semaphore and barrier
+```C++
+#include <barrier>
+
+class H2O {
+    counting_semaphore<1> semO;
+    counting_semaphore<2> semH;
+    std::barrier<> sync;
+public:
+    H2O():semH(2),semO(1),sync(3) {
+        
+    }
+
+    void hydrogen(function<void()> releaseHydrogen) {
+        semH.acquire();
+        sync.arrive_and_wait();
+        // releaseHydrogen() outputs "H". Do not change or remove this line.
+        releaseHydrogen();
+        semH.release();
+    }
+
+    void oxygen(function<void()> releaseOxygen) {
+        semO.acquire();
+        sync.arrive_and_wait();
+        // releaseOxygen() outputs "O". Do not change or remove this line.
+        releaseOxygen();
+        semO.release();
+    }
+};
+```
+
 # Dynamic Programming
 ## Dynamic Programming - Learn to Solve Algorithmic Problems & Coding Challenges
   * https://youtu.be/oBt53YbR9Kk
