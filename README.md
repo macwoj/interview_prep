@@ -196,7 +196,7 @@ public:
     }
 
     int size() {
-        lock_guard<mutex> lock(mtx_);
+        scoped_lock<mutex> lock(mtx_);
         return q_.size();
     }
 };
