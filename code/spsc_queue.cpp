@@ -16,7 +16,7 @@ private:
     }
 public:
 
-    SPSCQueue(size_t capacity): data_(capacity) {
+    SPSCQueue(size_t capacity): data_(capacity+1) {
         assert(capacity > 0);
         assert(capacity + 1 > 0);
     }
