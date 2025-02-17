@@ -110,6 +110,40 @@ std::vector<std::string> tokenize_string_stream(const std::string& str, char del
   * {1,2,3,4,6,7} upper_bound(5)=6 upper_bound(6)=7
 * `equal_range` - pair::first is the lower bound of the range (the same as lower_bound), and pair::second is the upper bound (the same as upper_bound)
 
+## prioirty queue/max heap
+```C++
+std::priority_queue<int> maxHeap;
+maxHeap.push(20);
+while (!maxHeap.empty()) {
+    std::cout << maxHeap.top() << " ";
+    maxHeap.pop();
+}
+```
+
+## heap
+```C++
+// Initializing a vector
+vector<int> v1 = { 20, 30, 40, 25, 15 };
+
+//O(N)
+make_heap(v1.begin(), v1.end());
+
+//to add first add to back then push_heap
+//O(N)
+vc.push_back(50);
+//O(log)
+push_heap(vc.begin(), vc.end());
+
+// using pop_heap() function to move the largest element
+// to the end
+// O(logN)
+pop_heap(vc.begin(), vc.end());
+
+// actually removing the element from the heap using
+// pop_back()
+vc.pop_back();
+```
+
 ## unordered_map
 
 ### insert
