@@ -201,6 +201,16 @@ q.back();
 q.pop();
 ```
 
+## stack
+```C++
+stack<int> stack;
+stack.push(25);
+while (!stack.empty()) {
+    cout << stack.top() <<" ";
+    stack.pop();
+}
+```
+
 ## vector
 ```C++
 vector<int> v(size,valuetoset);
