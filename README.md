@@ -113,13 +113,21 @@ std::vector<std::string> tokenize_string_stream(const std::string& str, char del
 ## unordered_map
 ```C++
 std::unordered_map<int,double> mymap;
-auto it = mymap.find (key);
-if ( got == mymap.end() )
-  cout << "Not found";
-//key
-it->first
-//value
-it->second;
+{
+ auto it = mymap.find (key);
+ if ( got == mymap.end() )
+   cout << "Not found";
+ //key
+ it->first
+ //value
+ it->second;
+}
+{
+ auto ret = myset.insert({20,0.0});
+ //iterator to the element
+ ret.first
+ //bool -> true was inserted, false - not inserted prev value returned
+ ret.second
 ```
 
 ## set
