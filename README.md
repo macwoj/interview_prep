@@ -111,23 +111,24 @@ std::vector<std::string> tokenize_string_stream(const std::string& str, char del
 * `equal_range` - pair::first is the lower bound of the range (the same as lower_bound), and pair::second is the upper bound (the same as upper_bound)
 
 ## unordered_map
+
+### insert
 ```C++
 std::unordered_map<int,double> mymap;
-{
- auto it = mymap.find (key);
- if ( got == mymap.end() )
-   cout << "Not found";
- //key
- it->first
- //value
- it->second;
-}
-{
- auto ret = myset.insert({20,0.0});
- //iterator to the element
- ret.first
- //bool -> true was inserted, false - not inserted prev value returned
- ret.second
+
+auto it = mymap.find (key);
+if ( got == mymap.end() )
+  cout << "Not found";
+//key
+it->first
+//value
+it->second;
+
+auto ret = mymap.insert({20,0.0});
+//iterator to the element
+ret.first
+//bool -> true was inserted, false - not inserted prev value returned
+ret.second
 ```
 
 ## set
@@ -211,6 +212,12 @@ public:
 ```
 
 ### Semaphore and barrier
+- `counting_semaphore<max_count> sem{starting_count}`; 
+ - ctor takes the stating count
+- sem.acquire()
+ - reduces count, if it reaches 0 then it gets unlocked
+- sem.release() increases count
+
 ```C++
 #include <barrier>
 
@@ -241,7 +248,7 @@ public:
 };
 ```
 
-###SPSC Queue
+### SPSC Queue
 ```C++
 template <class T, size_t N> 
 class LockFreeQueue {
