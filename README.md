@@ -157,12 +157,14 @@ set<int> intersect(const set<int>& a,const set<int>& b) {
 - poped at front
 ```C++
 queue<int> q;
-q.push(10); //at back
+//at back
+q.push(10); 
 q.size();
 q.empty();
 q.front();
 q.back();
-q.pop(); //at front
+//at front
+q.pop();
 ```
 
 ## vector
