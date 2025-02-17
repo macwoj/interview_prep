@@ -165,6 +165,11 @@ q.back();
 q.pop(); //at front
 ```
 
+## vector
+```C++
+vector<int> v(size,valuetoset);
+```
+
 ## C++ Threading
 
 ### Thread-safe queue that blocks for non-full/non-empty
