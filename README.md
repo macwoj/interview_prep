@@ -351,6 +351,29 @@ public:
 };
 ```
 
+## Preorder DFS using stack
+
+```C++
+// Preorder DFS using stack
+void preorderDFS(TreeNode* root) {
+    if (!root) return; // Base case: empty tree
+    
+    stack<TreeNode*> s;
+    s.push(root);
+
+    while (!s.empty()) {
+        TreeNode* node = s.top();
+        s.pop();
+        
+        cout << node->val << " "; // Visit the node
+
+        // Push right child first, so left child is processed first
+        if (node->right) s.push(node->right);
+        if (node->left) s.push(node->left);
+    }
+}
+```
+
 # Dynamic Programming
 ## Dynamic Programming - Learn to Solve Algorithmic Problems & Coding Challenges
   * https://youtu.be/oBt53YbR9Kk
