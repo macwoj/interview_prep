@@ -119,6 +119,19 @@ while (!maxHeap.empty()) {
     maxHeap.pop();
 }
 ```
+- min heap
+```C++
+priority_queue<int, vector<int>, greater<int> > pq;
+```
+
+- custom comparator
+```C++
+auto compare = [](int left, int right) {
+    return left < right;
+};
+priority_queue<int, vector<int>, decltype(compare)> pq(
+    compare);
+```
 
 ## heap
 ```C++
