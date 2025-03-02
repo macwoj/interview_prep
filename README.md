@@ -11,56 +11,12 @@
 
 # To know
 * https://www.geeksforgeeks.org/top-10-algorithms-in-interview-questions/
-* data structures
-  * arrays, linked lists, stacks, queues, hash-sets, hash-maps, hash-tables, dictionary, trees and binary trees, heaps and graphs.
-  * linked lists
-  * trees
-    * Binary trees
-      * each level has 2^L nodes. Start at 0.
-      * total nodes for complete tree is 2^D-1. Start at 1.
-  * tries
-  * graphs
-  * stacks
-  * queues
-  * heaps
-  * vector
-  * hash table
 * Sorting
-  * common sorting functions and on what kind of input data they’re efficient on or not. Think about efficiency means in terms of runtime and space used. For example, in exceptional cases insertion-sort or radix-sort are much better than the generic QuickSort/MergeSort/HeapSort answers.
   * merge sort
     * [sort/merge_sort.cpp][sort/merge_sort.cpp]
-  * quick sort 
-  * https://www.interviewcake.com/sorting-algorithm-cheat-sheet
 * algorithms
-  * sorting (plus searching and binary search), divide-and-conquer, dynamic programming/memoization, greediness,recursion or algorithms linked to a specific data structure. Know Big-O notations (e.g. run time) and be ready to discuss complex algorithms like Dijkstra and A*.
-  * breadth-first seach
-  * depth-first search
-  * binary search
-  * Greedy Algorithms
   * Cummulative algorithms
     * [largestSubgrid.cpp](code/largestSubgrid.cpp)
-  * Backtracking algorithms
-    * https://www.geeksforgeeks.org/backtracking-introduction/
-      * Q4_12_Paths_with_Sum
-      * backtracking and prefix sum
-        * https://youtu.be/ofMqFAFVcKY
-        * Prefix sum
-        * https://www.geeksforgeeks.org/prefix-sum-array-implementation-applications-competitive-programming/
-        * store each result in a map
-        * to find zero sum find the same sum that we are currenlty on
-        * to find specific sum, find current-sum, this works since we are keeping the running sum and looking up if anypath that we previously seen will have is the sum
-  * Sliding window algorithms
-* mathematics
-  * the essentials of elementary probability theory and combinatorics. You should be familiar with n-choose-k problems and their ilk.
-* Graphs
-  * Graphs: Consider if a problem can be applied with graph algorithms like distance, search, connectivity,cycle-detection, etc. There are three basic ways to represent a graph in memory (objects and pointers, matrix, and adjacency list) — familiarize yourself with each representation and its pros and cons. You should know the basic graph traversal algorithms, breadth-first search and depth-first search. Know their computational complexity, their tradeoffs and how to implement them in real code.
-* concepts
-  * Big O time
-  * Big O space
-  * recursion
-  * memoization/dynamic programming
-* Operating Systems: You should understand processes, threads, concurrency issues, locks, mutexes, semaphores, monitors and how they all work. Understand deadlock, livelock and how to avoid them. Know what resources a process needs and a thread needs. Understand how context switching works, how it's initiated by the operating system and underlying hardware. Know a little about scheduling. We are rapidly moving towards multi-core, so know the fundamentals of "modern" concurrency constructs.
-* System Design: System design questions are used to assess a candidate's ability to combine knowledge, theory, experience and judgement toward solving a real-world engineering problem. Sample topics include features sets, interfaces, class hierarchies, distributed systems, designing a system under certain constraints, simplicity, limitations, robustness and tradeoffs. You should also have an understanding of how the internet actually works and be familiar with the various pieces (routers, domain name servers, load balancers, firewalls, etc.). For information on system design, check out our research on distributed systems and parallel computing.
 # C++ Reference
 ## tokenize
 ```C++
