@@ -226,7 +226,13 @@ while (!stack.empty()) {
 
 ## vector
 ```C++
+// creating
 vector<int> v(size,valuetoset);
+```
+```C++
+// min/mac value
+auto min_val = *min_element(nums.begin(),nums.end());
+auto max_val = *max_element(nums.begin(),nums.end());
 ```
 
 ## C++ Threading
