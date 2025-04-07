@@ -62,5 +62,11 @@
 You type → Shell parses → Finds command → Forks → Executes → Waits → Shows result
 ```
 
-Let me know if you want to walk through an example like `ls -l | grep txt > out.txt`, or dive deeper into specific parts like I/O redirection, shell internals, or `execve` system calls.
+# Linux commands
 
+- uname -a
+  - print detailed system information
+- ip link
+  - display network interfaces
+- ip addr
+- ping
