@@ -63,7 +63,83 @@ You type → Shell parses → Finds command → Forks → Executes → Waits →
 ```
 
 # Whats an inode
-- An inode (index node) in Linux is a data structure used by file systems (like ext4, xfs, etc.) to store metadata about a file or directory — but not the file’s name or its actual data.
+
+An **inode** (index node) in Linux is a data structure used by file systems (like ext4, xfs, etc.) to store **metadata about a file or directory** — but **not** the file’s name or its actual data.
+
+### Key information stored in an inode:
+- **File type** (e.g., regular file, directory, symlink)
+- **Permissions** (read/write/execute)
+- **Owner and group** (UID and GID)
+- **File size**
+- **Timestamps** (created, modified, accessed)
+- **Link count** (how many directory entries refer to this inode)
+- **Pointers to data blocks** (addresses on disk where the actual file contents are stored)
+
+### Things *not* in the inode:
+- **File name** — that's stored in the directory entry that maps a name to an inode number.
+
+### How it works:
+When you list files (e.g., with `ls -i`), you can see their inode numbers. Behind the scenes:
+1. The file system looks up the directory name to get the inode number.
+2. It then uses that inode to fetch the file's metadata and data.
+
+### Why inodes matter:
+- A file with **zero links** (link count = 0) is deleted.
+- Filesystems have a **fixed number of inodes**; you can run out of inodes before you run out of disk space.
+- Understanding inodes is important for **low-level debugging**, **performance tuning**, or working on filesystems or backup tools.
+
+# soft/hard link
+
+In Linux, both **soft links** (also called **symbolic links**) and **hard links** are ways to reference files, but they work differently under the hood. Here's a breakdown:
+
+---
+
+### 🧷 Soft Link (Symbolic Link)
+
+- **What it is**: A special file that *points* to another file or directory by name.
+- **Command**: `ln -s target link_name`
+- **Can link across filesystems**: ✅ Yes
+- **Can link to directories**: ✅ Yes (commonly used for this)
+- **If the target is deleted**: ❌ The link is broken ("dangling symlink")
+- **Metadata**: Separate inode; doesn’t share file metadata (e.g., permissions, timestamps)
+
+**Example**:
+```bash
+ln -s /path/to/original /path/to/link
+```
+
+---
+
+### 🔗 Hard Link
+
+- **What it is**: A direct reference to the same inode (same actual file data).
+- **Command**: `ln target link_name`
+- **Can link across filesystems**: ❌ No
+- **Can link to directories**: ❌ Not by default (to avoid circular structures)
+- **If the target is deleted**: ✅ The link still works, because the inode still exists
+- **Metadata**: Shares inode, so it's indistinguishable from the original
+
+**Example**:
+```bash
+ln /path/to/original /path/to/hardlink
+```
+
+---
+
+### 🧠 Summary Table
+
+| Feature                 | Soft Link (Symbolic) | Hard Link           |
+|------------------------|----------------------|---------------------|
+| Points to              | File name/path       | File inode          |
+| Cross-filesystem       | ✅ Yes               | ❌ No               |
+| Links to directories   | ✅ Yes               | ❌ No (normally)    |
+| Broken if target gone  | ✅ Yes               | ❌ No               |
+| Shares inode           | ❌ No                | ✅ Yes              |
+| Command                | `ln -s`              | `ln`                |
+
+---
+
+Let me know if you want examples or want to dive deeper into how inodes work!
 
 # Linux commands
 
