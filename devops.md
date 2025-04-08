@@ -62,6 +62,9 @@
 You type → Shell parses → Finds command → Forks → Executes → Waits → Shows result
 ```
 
+# Whats an inode
+- An inode (index node) in Linux is a data structure used by file systems (like ext4, xfs, etc.) to store metadata about a file or directory — but not the file’s name or its actual data.
+
 # Linux commands
 
 - uname -a
