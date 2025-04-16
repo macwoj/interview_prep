@@ -143,9 +143,114 @@ Let me know if you want examples or want to dive deeper into how inodes work!
 
 # Linux commands
 
-- uname -a
-  - print detailed system information
+
 - ip link
   - display network interfaces
 - ip addr
 - ping
+
+# troubleshooting
+
+- `uptime`
+  - load average, the three numbers are exponentially damped moving sum averages with a 1 minute, 5 minute, and 15 minute constant.
+- `uname -a`
+  - print detailed system information
+- `dmesg | tail`
+  - This views the last 10 system messages
+- `vmstat 1`
+  - virtual memory stat
+  - r: Number of processes running on CPU and waiting for a turn. This provides a better signal than load averages for determining CPU saturation, as it does not include I/O. To interpret: an “r” value greater than the CPU count is saturation.
+  - free: Free memory in kilobytes. If there are too many digits to count, you have enough free memory. The “free -m” command, included as command 7, better explains the state of free memory.
+  - si, so: Swap-ins and swap-outs. If these are non-zero, you’re out of memory.
+  - us, sy, id, wa, st: These are breakdowns of CPU time, on average across all CPUs. They are user time, system time (kernel), idle, wait I/O, and stolen time (by other guests, or with Xen, the guest’s own isolated driver domain).
+- `mpstat -P ALL 1`
+  - prints CPU time breakdowns per CPU
+- `pidstat 1`
+  - like top prints a rolling summary instead of clearing the screen
+- `iostat -xz 1`
+
+
+disk is full
+
+```bash
+df -h
+du -sh *
+
+#truncate file
+>filename.log
+```
+
+find and grep
+
+```bash
+find / -name httpd.conf
+
+#directory 
+find /home -type d -name directoryname
+```
+
+compnare 2 files
+
+```bash
+diff filename0 filename1
+
+#side by side
+sdiff filename0 filename1
+```
+
+cpu usage
+
+```bash
+htop
+
+
+#memory
+free -m
+sar 1 3
+
+vmstat 1
+#r values
+# memort, swap memory
+# 
+
+#cpu info
+cat /proc/cpuinfo
+```
+
+network
+
+```bash
+ifconfig
+ip a
+
+sudo dmesg
+sudo dmidecode
+
+tcpdump -i any -s0
+
+ping 
+
+telnet
+```
+
+ssh
+
+```bash
+sestatus
+iptables
+tail /var/log/audit/audit.log
+ssh -vvv
+```
+
+kill process
+
+```bash
+#list threads
+ps -ef | grep
+
+kill -9 id
+```
+
+```bash
+perf
+```
