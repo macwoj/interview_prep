@@ -65,6 +65,20 @@ This design ensures that bugs or vulnerabilities in user applications are contai
 6. **Login Prompt**:  
    Finally, a **login prompt or graphical display manager** is shown, allowing user interaction.
 
----
+# Virtual memory
 
-Let me know if you want a visual reference or a deeper dive into any stage (e.g., GRUB config or systemd internals).
+**Virtual memory** is a memory management technique used by operating systems to give the illusion of a large, continuous memory space to processes, even if the physical RAM is limited.
+
+### Key Points:
+- **Abstraction**: Each process gets its own virtual address space, isolated from others.
+- **Paging**: Memory is divided into fixed-size blocks (pages), which can be moved between physical RAM and disk (usually in a swap file or partition).
+- **Benefits**:
+  - Allows programs to use more memory than physically available.
+  - Improves isolation and security between processes.
+  - Simplifies memory allocation for applications.
+
+### How It Works:
+- When a process accesses memory, the virtual address is translated to a physical address by the **Memory Management Unit (MMU)** using **page tables**.
+- If the page is not in RAM, a **page fault** occurs and the OS loads it from disk (swap) into memory.
+
+In short, virtual memory allows efficient and secure use of memory by abstracting physical memory and using disk as an extension when needed.
