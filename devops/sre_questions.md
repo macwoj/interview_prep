@@ -44,6 +44,21 @@ When you type a command in the shell, the shell first parses the input, performi
 - When a signal is sent (e.g., via kill or a hardware fault), the kernel marks it as pending for the target process. If the signal is unblocked, the kernel delivers it by interrupting the process's execution. Each signal has a default disposition—such as terminating the process or generating a core dump—but a process can override this using signal handlers (signal() or sigaction()), or block signals via signal masks to delay handling during critical sections.
 - Some signals (like real-time signals) are queued, but standard signals are not—only one pending instance is tracked. Signals are crucial in SRE for managing long-running daemons, handling graceful shutdowns, debugging crashes (e.g., via SIGSEGV), or implementing monitoring hooks using SIGUSR1/2.
 
+**Can be handled (most common):**
+- `SIGINT` (Ctrl+C)
+- `SIGTERM` (kill default)
+- `SIGHUP` (terminal closed)
+- `SIGUSR1`, `SIGUSR2` (user-defined)
+- `SIGALRM`, `SIGCHLD`, `SIGPIPE`, `SIGTSTP`, `SIGCONT`, `SIGQUIT`
+
+**Cannot be caught or ignored:**
+- `SIGKILL` (signal 9) — always terminates the process
+- `SIGSTOP` (signal 19) — always suspends the process
+
+**Notes:**
+- `SIGSEGV`, `SIGFPE`, `SIGILL`, `SIGBUS` can be caught but should be used carefully (used for crashes/faults)
+- Use `sigaction()` to handle signals robustly
+- Masking or ignoring critical signals like `SIGKILL`/`SIGSTOP` is not possible by design
 ## thread vs process
 - **Process**: A process is an independent program in execution with its own memory space, file descriptors, and system resources. Each process has a unique **PID** (Process ID) and is managed by the kernel. Processes don’t share memory unless explicitly set up via inter-process communication (IPC).
 
@@ -76,7 +91,7 @@ In Linux, threads are implemented using the `clone()` system call and are treate
 - If the parent exits, `init` adopts and reaps the zombie
 - Too many zombies can exhaust PID space and indicate a bug in the parent process
 
-## Linux nice values
+## Linux NICE values
 
 - A **nice value** determines the *priority* of a user-space process during CPU scheduling.
 - Range: **-20 (highest priority)** to **+19 (lowest priority)**. Default is **0**.
