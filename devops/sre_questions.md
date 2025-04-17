@@ -1,6 +1,7 @@
 - https://www.youtube.com/watch?v=sL7h1rOn0K0&list=PLhqPDa2HoaAZcamYtXr-ijXBT-vcUBcNX
 - https://awstip.com/sre-devops-interview-questions-linux-troubleshooting-1b8ffe82c16
 - https://awstip.com/sre-devops-interview-questions-linux-troubleshooting-extended-c12cb5ded3b0
+- https://github.com/mxssl/sre-interview-prep-guide?tab=readme-ov-file
 
 
 # What happens internally when we type a command in the shell
@@ -43,3 +44,27 @@ Kernel Space is where the core of the operating system runs — including things
 User Space, on the other hand, is where all user applications run. These applications don’t have direct access to hardware or kernel memory. Instead, they communicate with the kernel through controlled interfaces, primarily system calls. This separation enforces security and stability — for example, if an application crashes in user space, it doesn’t bring down the whole OS.
 
 This design ensures that bugs or vulnerabilities in user applications are contained and cannot compromise the core of the system.”**
+
+# **Linux Boot Process (Interview Format):**
+
+1. **BIOS/UEFI Initialization**:  
+   When the system powers on, the **BIOS or UEFI** firmware performs POST (Power-On Self Test) and initializes hardware. It locates the bootable device and loads the bootloader into memory.
+
+2. **Bootloader (e.g., GRUB)**:  
+   The **bootloader** is responsible for loading the kernel. GRUB (GRand Unified Bootloader) presents a boot menu (if configured) and loads the selected Linux kernel and the initial RAM disk (**initrd/initramfs**).
+
+3. **Kernel Loading**:  
+   The **Linux kernel** is decompressed and loaded into memory. It initializes hardware drivers, mounts the initial RAM filesystem, and sets up memory management and process scheduling.
+
+4. **Initramfs and Init Process**:  
+   The **initramfs** contains scripts and tools needed for early boot (e.g., finding and mounting the root filesystem). Once ready, it hands control to **PID 1**, the **`init`** system (e.g., `systemd`, `SysVinit`, or `upstart`).
+
+5. **System Initialization**:  
+   The init system sets up all user-space services and targets (e.g., network, file systems, login services). With `systemd`, this involves processing unit files to start services in parallel.
+
+6. **Login Prompt**:  
+   Finally, a **login prompt or graphical display manager** is shown, allowing user interaction.
+
+---
+
+Let me know if you want a visual reference or a deeper dive into any stage (e.g., GRUB config or systemd internals).
