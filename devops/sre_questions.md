@@ -8,10 +8,6 @@
 
 When you type a command in the shell, the shell first parses the input, performing expansions (like variables, command substitution, and globbing), and checks whether the command is a built-in, function, or an external executable. If it’s external, the shell searches for it in the directories listed in the $PATH environment variable. Once located, the shell creates a child process using fork(), and the child process replaces itself with the executable using exec(). Before execution, the shell sets up any necessary input/output redirection. The parent shell then waits for the child to finish unless the command is run in the background, and finally returns control to the user after collecting the command's exit status.
 
-Here's a more compact version:
-
----
-
 ## What Happens When You Type `ps` in Linux
 
 1. **Shell Input**
@@ -40,8 +36,6 @@ Here's a more compact version:
    - Calls `exit()` → kernel handles cleanup via `exit_group` syscall (231).
 
 ---
-
-Let me know if you want the syscall assembly included in this version.
 
 # signal hanlding
 - In Linux, a signal is a kernel mechanism used to asynchronously notify a process that an event has occurred—such as an interrupt, fault, or termination request. Common examples include SIGINT (interrupt), SIGTERM (termination), and SIGKILL (force kill).
