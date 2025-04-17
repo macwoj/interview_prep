@@ -146,6 +146,16 @@ ICMP (Internet Control Message Protocol) operates at the network layer and is us
 - **DNS over HTTPS (DoH)** – over HTTPS (port 443), widely used by browsers (e.g., Firefox, Chrome).
 - **DNSSEC** – provides origin authentication via digital signatures but needs to be validated by the resolver.
 
+## DNS Stored in:
+
+- `/etc/resolv.conf` – primary DNS resolver configuration (nameservers, search domains)  
+- `/etc/hosts` – static hostname-to-IP mappings, checked before DNS  
+- `/etc/nsswitch.conf` – defines lookup order, e.g., `hosts: files dns`  
+- `/run/systemd/resolve/resolv.conf` – used by `systemd-resolved` for DNS settings  
+- `resolvectl status` – shows current DNS status under systemd  
+- `/etc/NetworkManager` – stores DNS configs managed by NetworkManager  
+- `nmcli` – CLI tool to view or set DNS via NetworkManager
+
 ---
 
 ## 🧠 Interview Soundbite
