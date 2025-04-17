@@ -17,6 +17,14 @@
 
 ---
 
+## UDP
+
+UDP (User Datagram Protocol) is a connectionless, lightweight transport layer protocol in the IP suite. It sends datagrams without establishing a connection, meaning there's no guarantee of delivery, ordering, or error correction. It's useful for real-time applications like DNS, VoIP, and video streaming where speed is more critical than reliability.
+
+# ICMP
+
+ICMP (Internet Control Message Protocol) operates at the network layer and is used for sending control messages and error reports—e.g., when a service is unreachable or a packet’s TTL has expired. ICMP is not used to send application data. Tools like ping and traceroute rely on ICMP.
+
 ## 🔹 **TLS (Transport Layer Security)**
 
 **Purpose:** Adds **confidentiality**, **integrity**, and **authentication** on top of TCP.
