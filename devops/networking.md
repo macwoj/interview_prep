@@ -164,4 +164,30 @@ ICMP (Internet Control Message Protocol) operates at the network layer and is us
 
 ---
 
-Would you like this added to the reference sheet too?
+# How does packet routing work?
+
+Here's a compact breakdown of how packet routing works:
+
+- **Routing by IP address**  
+  The source computer uses the destination IP address in the packet header to determine where to send the packet. It checks its local routing table to find the next hop.
+
+- **Local routing table**  
+  This table contains routes for:
+  - Directly connected networks (via interfaces like `eth0`)
+  - A default gateway (used if no specific route is found)
+
+- **Next hop and gateways**  
+  If the destination is not on the local subnet, the packet is forwarded to the configured **default gateway** (router). The router repeats the process, forwarding the packet to the next router along the path.
+
+- **How packets move across networks**  
+  - Each router along the way uses its own routing table to decide the next hop
+  - Packets may take different paths to reach the same destination (IP routing is stateless)
+  - Protocols like BGP (between ISPs) and OSPF (within large networks) determine routes dynamically
+
+- **ARP for local delivery**  
+  Before sending a packet on the local network, the system uses ARP (Address Resolution Protocol) to resolve the destination IP to a MAC address.
+
+- **TTL and fragmentation**  
+  Each packet has a TTL (time to live) to prevent infinite loops. Packets may be fragmented if they exceed the MTU of a network segment.
+
+---
