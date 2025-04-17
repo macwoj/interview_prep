@@ -37,12 +37,14 @@ When you type a command in the shell, the shell first parses the input, performi
 
 ---
 
-# signal hanlding
+# Linux process/threads
+
+## signal handling
 - In Linux, a signal is a kernel mechanism used to asynchronously notify a process that an event has occurred—such as an interrupt, fault, or termination request. Common examples include SIGINT (interrupt), SIGTERM (termination), and SIGKILL (force kill).
 - When a signal is sent (e.g., via kill or a hardware fault), the kernel marks it as pending for the target process. If the signal is unblocked, the kernel delivers it by interrupting the process's execution. Each signal has a default disposition—such as terminating the process or generating a core dump—but a process can override this using signal handlers (signal() or sigaction()), or block signals via signal masks to delay handling during critical sections.
 - Some signals (like real-time signals) are queued, but standard signals are not—only one pending instance is tracked. Signals are crucial in SRE for managing long-running daemons, handling graceful shutdowns, debugging crashes (e.g., via SIGSEGV), or implementing monitoring hooks using SIGUSR1/2.
 
-# thread vs process
+## thread vs process
 - **Process**: A process is an independent program in execution with its own memory space, file descriptors, and system resources. Each process has a unique **PID** (Process ID) and is managed by the kernel. Processes don’t share memory unless explicitly set up via inter-process communication (IPC).
 
 - **Thread**: A thread is a lightweight unit of execution within a process. Multiple threads in the same process share the same memory and resources, allowing faster communication and lower overhead than processes. Threads are managed by the **scheduler**, just like processes, and are identified by **TIDs** (Thread IDs).
@@ -58,7 +60,7 @@ When you type a command in the shell, the shell first parses the input, performi
 
 In Linux, threads are implemented using the `clone()` system call and are treated as **lightweight processes** (tasks), which is why Linux sometimes refers to both threads and processes collectively as “tasks.” Tools like `ps`, `top`, or `htop` can show both processes and threads depending on the flags used.
 
-# Linux process hierarchy
+## Linux process hierarchy
 
 - All processes form a tree rooted at `init` or `systemd` (PID 1)
 - Each process has a parent (PPID) and may have children
@@ -66,13 +68,45 @@ In Linux, threads are implemented using the `clone()` system call and are treate
 - The kernel tracks these relationships to manage resources and signals
 - Use `ps -ef`, `pstree`, or `top` to view the hierarchy
 
-# Zombie process
+## Zombie process
 
 - A zombie is a child process that has exited but still has an entry in the process table
 - Happens when the parent hasn’t called `wait()` to collect its exit status
 - Zombies appear with status `Z` in `ps` or `top`
 - If the parent exits, `init` adopts and reaps the zombie
 - Too many zombies can exhaust PID space and indicate a bug in the parent process
+
+## Linux nice values
+
+- A **nice value** determines the *priority* of a user-space process during CPU scheduling.
+- Range: **-20 (highest priority)** to **+19 (lowest priority)**. Default is **0**.
+- A *lower nice value* means the process is treated as more important and gets more CPU time.
+- Only the **root user** can assign negative nice values (raise priority).
+- You can set the nice value at process launch with `nice -n <value> <command>`, or change it for a running process with `renice`.
+- The kernel uses the **nice value as input to the scheduler**, which also considers other factors like I/O wait, sleep time, etc.
+
+Here are the main Linux commands to view and change nice values:
+
+- **Check nice value of running processes**  
+  `ps -eo pid,comm,nice`  
+  or  
+  `top` (look under the **NI** column)
+
+- **Start a process with a specific nice value**  
+  `nice -n 10 some_command`  
+  (default is 0; positive values lower priority)
+
+- **Change nice value of a running process**  
+  `renice -n 5 -p <PID>`  
+  (only root can decrease the nice value, e.g., from 10 to 0)
+
+- **Check effective scheduling priority (more detail)**  
+  `chrt -p <PID>`  
+  (for real-time and other policies, not just nice)
+
+Example:  
+If two CPU-bound processes are running, one with nice 0 and one with nice 10, the one with nice 0 will get more CPU time.
+
 
 # Whats an inode
 
