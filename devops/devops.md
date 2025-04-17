@@ -19,6 +19,12 @@
   - like top prints a rolling summary instead of clearing the screen
 - `iostat -xz 1`
   - block device activity
+  - `%user`: Time CPU spends on user-space processes (non-kernel code like apps, databases).
+  - `%system`: Time spent on kernel-space tasks (e.g., I/O handling, system calls).
+  - `%iowait`: Time the CPU is idle **waiting for disk I/O** to complete.
+  - `%idle`: Time CPU is idle and **not waiting on I/O** (truly free time).
+  - **High `%iowait`** → Disk is slow or overloaded.  
+  - **High `%system`** → Many kernel-level operations (e.g., network, I/O, context switching).
 - `free -m`
   - free memory stats
 - `sar -n DEV 1`
@@ -68,8 +74,14 @@
   - `mount /dev/sda2 /mnt`
   - `mount` - list all mounts
   - `cat /etc/fstab` - mounts on start
-- my system is slow
-  - 
+- Finding io bottleneck
+  - **Check `iostat -xz`**:
+    - **High `%iowait`?** → Disk is likely the bottleneck.
+    - **Low `%idle` + high `%system`?** → System under CPU pressure or too many I/O interrupts.
+    - `r/s`, `w/s`: read/write operations per second.
+    - `await`: average time per I/O request → high values = slow disk.
+    - `util`: % of time disk was busy → >80% = saturation.
+    - `svctm`: average service time per I/O → high = disk strain.
 
 ## network
 
