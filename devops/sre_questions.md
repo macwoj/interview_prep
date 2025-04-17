@@ -37,6 +37,18 @@ When you type a command in the shell, the shell first parses the input, performi
 
 ---
 
+## What happens when you call `nohup program&`
+
+- `nohup` ignores SIGHUP so the program isn't terminated when the terminal closes  
+- `&` runs the program in the background  
+- the command becomes immune to hangups (e.g. terminal logout or SSH disconnect)  
+- stdout and stderr are redirected to `nohup.out` if not explicitly redirected  
+- the shell immediately returns control to the user  
+- the background process gets a new PID, shown by the shell  
+- it keeps running in the background even after logout  
+- input is detached from the terminal (stdin is usually set to `/dev/null`)  
+- job control features like `jobs`, `fg`, and `bg` can still be used in the current shell session while it's active
+
 # Linux process/threads
 
 ## signal handling
@@ -59,6 +71,7 @@ When you type a command in the shell, the shell first parses the input, performi
 - `SIGSEGV`, `SIGFPE`, `SIGILL`, `SIGBUS` can be caught but should be used carefully (used for crashes/faults)
 - Use `sigaction()` to handle signals robustly
 - Masking or ignoring critical signals like `SIGKILL`/`SIGSTOP` is not possible by design
+
 ## thread vs process
 - **Process**: A process is an independent program in execution with its own memory space, file descriptors, and system resources. Each process has a unique **PID** (Process ID) and is managed by the kernel. Processes don’t share memory unless explicitly set up via inter-process communication (IPC).
 
@@ -156,8 +169,41 @@ If two CPU-bound processes are running, one with nice 0 and one with nice 10, th
   - `write()` returns -1 with `EAGAIN` if buffer full
   - use with `select()`, `poll()`, or `epoll()` for multiplexing
 
-want code examples next?
+## fork and exec
 
+- `fork()` creates a **new child process** by duplicating the current process (parent). Both processes continue executing from the next line after `fork()`.
+- Return values of `fork()` help distinguish:
+  - `>0`: in parent, return is child's PID  
+  - `0`: in child  
+  - `<0`: error in creating process  
+- After `fork()`, the child is often replaced with a new program using `exec()`.
+- `exec()` loads a new binary into the current process's memory, replacing its code, stack, heap, and data.
+- It does **not return** if successful—execution continues in the new program.
+- If `exec()` fails, control returns to the child process.
+- `fork()` + `exec()` is commonly used to run new programs (e.g., in shells).
+- File descriptors, environment variables, and signal dispositions are preserved across `exec()` unless specifically cleared.
+
+Example flow:
+- Shell calls `fork()` → child created  
+- In child: `exec("/bin/ls")` → now running `ls`  
+- In parent: `wait()` for child to finish  
+
+Used for:
+- Spawning subprocesses  
+- Implementing job control in shells  
+- Isolating new programs from current code
+
+- **Memory**:  
+  - On `fork()`, the entire memory space is logically duplicated (stack, heap, data, code), but most OSes use **copy-on-write** to avoid physically copying until modified.
+  - On `exec()`, the process's memory is **replaced** with the new program’s memory layout.
+
+- **File descriptors**:  
+  - On `fork()`, file descriptors are **copied by reference** — parent and child share the same underlying file table entries.
+  - On `exec()`, file descriptors remain open **unless** they have the `FD_CLOEXEC` flag set, which causes them to be closed during `exec()`.
+
+Summary:
+- `fork()`: memory is logically copied (copy-on-write), file descriptors shared  
+- `exec()`: memory is replaced, file descriptors preserved unless `FD_CLOEXEC`
 
 # Whats an inode
 
