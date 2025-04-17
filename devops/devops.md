@@ -48,6 +48,31 @@
     -  all network connections (TCP/UDP) and listening sockets.
   - `lsof -i :<port>` `lsof -i tcp` `lsof -i udp`
 
+## perf
+
+- Hardware Counters
+  - `cpu-cycles`: Total CPU cycles  
+  - `instructions`: Executed instructions  
+  - `cache-references`: Cache accesses  
+  - `cache-misses`: Cache misses  
+  - `branches`: Branch instructions  
+  - `branch-misses`: Branch mispredictions  
+  - `bus-cycles`: Memory bus cycles  
+  - `ref-cycles`: Constant-rate reference cycles  
+- Software Counters
+  - `page-faults`: Total page faults  
+  - `minor-faults`: No I/O needed  
+  - `major-faults`: With disk I/O  
+  - `context-switches`: Voluntary/involuntary switches  
+  - `cpu-migrations`: Task moved between CPUs  
+  - `task-clock`: Time task ran on CPU  
+  - `cpu-clock`: Total CPU time used  
+  - `alignment-faults`: Misaligned accesses  
+  - `emulation-faults`: Instructions emulated by kernel  
+
+```bash
+perf stat -e cycles,instructions,cache-misses ./my_app
+```
 
 ## troubleshooting
 
@@ -74,6 +99,8 @@
   - `mount /dev/sda2 /mnt`
   - `mount` - list all mounts
   - `cat /etc/fstab` - mounts on start
+  - view vnfs
+    - `mount -t nfs,nfs4`
 - Finding io bottleneck
   - **Check `iostat -xz`**:
     - **High `%iowait`?** → Disk is likely the bottleneck.
