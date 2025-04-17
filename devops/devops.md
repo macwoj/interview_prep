@@ -22,9 +22,10 @@
 - `free -m`
   - free memory stats
 - `sar -n DEV 1`
+  - system activity reporter
   - network interface throughput
-- `sar -n TCP,ETCP 1`
-  - tcp stats
+  - `sar -n TCP,ETCP 1`
+    - tcp stats
 - `strace -tp (pgrep <process_name>)`
   - trace systems calls for program
   - -t timestamp, -p attach to specific pid, pgrep <process_name> - get pid
@@ -36,7 +37,10 @@
 - `du -sh * | sort -h`
   - disk usage 
 - `lsof`
-  - list open files
+  - list open file descriptors
+  - `lsof -i`
+    -  all network connections (TCP/UDP) and listening sockets.
+  - `lsof -i :<port>` `lsof -i tcp` `lsof -i udp`
 
 
 ## troubleshooting
@@ -74,11 +78,15 @@
 - `ip addr show`
   - newwer ifconfig to see ip and interface info
 - `netstat -tulpn`
+  - network stats
+- `lsof -i`
 - `tcpdump -i any -s0`
 - `ping ip`
 - `telnet`
 - `traceroute`
 - `ssh`
+- `ss -mop`
+  - socket stats
 
 disk is full
 
