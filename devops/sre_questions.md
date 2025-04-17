@@ -8,10 +8,47 @@
 
 When you type a command in the shell, the shell first parses the input, performing expansions (like variables, command substitution, and globbing), and checks whether the command is a built-in, function, or an external executable. If it’s external, the shell searches for it in the directories listed in the $PATH environment variable. Once located, the shell creates a child process using fork(), and the child process replaces itself with the executable using exec(). Before execution, the shell sets up any necessary input/output redirection. The parent shell then waits for the child to finish unless the command is run in the background, and finally returns control to the user after collecting the command's exit status.
 
+Here's a more compact version:
+
+---
+
+## What Happens When You Type `ps` in Linux
+
+1. **Shell Input**
+   - You type `ps` and press Enter.
+   - Shell parses it, finds the binary via `$PATH`.
+
+2. **Process Fork and Exec**
+   - Shell calls `fork()` → child process created.
+   - Child calls `execve("/bin/ps", ["ps"], envp)` → replaces shell with `ps`.
+
+3. **Kernel: execve Syscall**
+   - `execve` triggers a `syscall` (number 59 on x86_64).
+   - Kernel loads the ELF binary, sets up stack, arguments, and instruction pointer.
+
+4. **Program Starts**
+   - Execution begins at `_start`, then calls `main()`.
+
+5. **ps Reads Process Info**
+   - Reads `/proc/[pid]/stat`, `/proc/[pid]/cmdline`, etc.
+   - Uses syscalls like `open`, `read`, `getdents64`, `close`.
+
+6. **Output**
+   - Formats process info and writes to stdout using `write(1, ...)`.
+
+7. **Exit**
+   - Calls `exit()` → kernel handles cleanup via `exit_group` syscall (231).
+
+---
+
+Let me know if you want the syscall assembly included in this version.
+
+# signal hanlding
+- In Linux, a signal is a kernel mechanism used to asynchronously notify a process that an event has occurred—such as an interrupt, fault, or termination request. Common examples include SIGINT (interrupt), SIGTERM (termination), and SIGKILL (force kill).
+- When a signal is sent (e.g., via kill or a hardware fault), the kernel marks it as pending for the target process. If the signal is unblocked, the kernel delivers it by interrupting the process's execution. Each signal has a default disposition—such as terminating the process or generating a core dump—but a process can override this using signal handlers (signal() or sigaction()), or block signals via signal masks to delay handling during critical sections.
+- Some signals (like real-time signals) are queued, but standard signals are not—only one pending instance is tracked. Signals are crucial in SRE for managing long-running daemons, handling graceful shutdowns, debugging crashes (e.g., via SIGSEGV), or implementing monitoring hooks using SIGUSR1/2.
+
 # thread vs process
-
-In Linux:
-
 - **Process**: A process is an independent program in execution with its own memory space, file descriptors, and system resources. Each process has a unique **PID** (Process ID) and is managed by the kernel. Processes don’t share memory unless explicitly set up via inter-process communication (IPC).
 
 - **Thread**: A thread is a lightweight unit of execution within a process. Multiple threads in the same process share the same memory and resources, allowing faster communication and lower overhead than processes. Threads are managed by the **scheduler**, just like processes, and are identified by **TIDs** (Thread IDs).
@@ -26,6 +63,22 @@ In Linux:
 | Linux Creation | `fork()`, `exec()`               | `pthread_create()` or via clone()   |
 
 In Linux, threads are implemented using the `clone()` system call and are treated as **lightweight processes** (tasks), which is why Linux sometimes refers to both threads and processes collectively as “tasks.” Tools like `ps`, `top`, or `htop` can show both processes and threads depending on the flags used.
+
+# Linux process hierarchy
+
+- All processes form a tree rooted at `init` or `systemd` (PID 1)
+- Each process has a parent (PPID) and may have children
+- Child processes are created using `fork()` or `clone()`
+- The kernel tracks these relationships to manage resources and signals
+- Use `ps -ef`, `pstree`, or `top` to view the hierarchy
+
+# Zombie process
+
+- A zombie is a child process that has exited but still has an entry in the process table
+- Happens when the parent hasn’t called `wait()` to collect its exit status
+- Zombies appear with status `Z` in `ps` or `top`
+- If the parent exits, `init` adopts and reaps the zombie
+- Too many zombies can exhaust PID space and indicate a bug in the parent process
 
 # Whats an inode
 
