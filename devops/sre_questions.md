@@ -107,6 +107,42 @@ Here are the main Linux commands to view and change nice values:
 Example:  
 If two CPU-bound processes are running, one with nice 0 and one with nice 10, the one with nice 0 will get more CPU time.
 
+## Pipes
+
+- In Linux, pipes are used for inter-process communication (IPC), allowing data to flow from one process to another, typically in a unidirectional stream. Here's how they work:
+- A pipe is created using the `pipe()` system call, which returns two file descriptors:
+  - `fd[0]` for reading
+  - `fd[1]` for writing
+- In a shell, using `|` (pipe symbol), like `ls | grep txt`, sets up a pipe between `ls` and `grep`
+- The shell:
+  - Creates a pipe
+  - Forks two child processes
+  - Redirects `stdout` of the first command to `fd[1]` (write end)
+  - Redirects `stdin` of the second command to `fd[0]` (read end)
+  - Closes unused ends in each process
+- Data written to `fd[1]` by the producer process is buffered by the kernel and can be read from `fd[0]` by the consumer process
+- Pipes are unidirectional: to get bidirectional communication, two pipes are needed
+- `pipe()` is typically used in low-level C code; in the shell, pipes are created implicitly using `|`
+- Pipes are anonymous (unnamed) unless explicitly created using named pipes (`mkfifo`) for communication between unrelated processes
+- named pipes (FIFOs):
+  - created with `mkfifo` or `mknod <name> p`
+  - visible in filesystem, used by unrelated processes
+  - `echo hi > mypipe` (writer blocks until reader connects)
+  - `cat < mypipe` (reader blocks until writer writes)
+- buffering:
+  - kernel buffer, usually 64 KB
+  - writer blocks if buffer is full
+  - reader blocks if buffer is empty
+  - no user-level flushing needed
+- blocking behavior:
+  - default mode is blocking
+  - non-blocking with `fcntl(fd, F_SETFL, O_NONBLOCK)`
+  - `read()` returns -1 with `EAGAIN` if no data
+  - `write()` returns -1 with `EAGAIN` if buffer full
+  - use with `select()`, `poll()`, or `epoll()` for multiplexing
+
+want code examples next?
+
 
 # Whats an inode
 
