@@ -62,8 +62,27 @@ ICMP (Internet Control Message Protocol) operates at the network layer and is us
 - Avoids TCP HOL blocking, faster handshakes.
 - Encrypts all payloads and metadata (even headers).
 
-### Interview Highlight:
-> "I’ve worked with HTTP/1.1 and HTTP/2 in production, tuning keep-alive timeouts and debugging slow endpoints with `curl -v`, HAR files, and latency breakdowns."
+## HTTPS
+
+Sure, here’s the original explanation rewritten as a single compact list:
+
+- HTTPS = HTTP over TLS, which provides encryption, authentication, and integrity
+- A TCP 3-way handshake establishes the connection first:
+  - Client sends SYN
+  - Server replies with SYN-ACK
+  - Client responds with ACK
+- After TCP, the TLS handshake begins:
+  - Client Hello: sends supported TLS version, cipher suites, random value
+  - Server Hello: replies with selected cipher suite, its certificate (with public key), and its random value
+  - Client verifies the server's certificate using a trusted Certificate Authority (CA)
+  - Client generates a pre-master key, encrypts it with the server's public key (asymmetric encryption), and sends it to the server
+  - Both sides derive the same session key using the client random, server random, and pre-master key
+  - Finished messages are exchanged using the session key to confirm handshake completion
+  - Encrypted communication begins using symmetric encryption (e.g. AES)
+- Asymmetric encryption (RSA, ECDSA) is used only during the handshake for key exchange and authentication
+- Symmetric encryption (AES, ChaCha20) is used for the actual data transfer due to its speed and efficiency
+
+Let me know if you want this turned into a diagram or command-level walk-through.
 
 ---
 
