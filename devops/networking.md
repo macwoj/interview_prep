@@ -210,3 +210,98 @@ Here's a compact breakdown of how packet routing works:
   Each packet has a TTL (time to live) to prevent infinite loops. Packets may be fragmented if they exceed the MTU of a network segment.
 
 ---
+
+- **How does packet routing work?**  
+  Routing table (`ip route`) determines next hop; kernel uses longest prefix match.
+
+- **What’s the difference between TCP and UDP?**  
+  TCP: reliable, connection-based. UDP: faster, connectionless, no retransmit.
+
+- **What is a socket?**  
+  Endpoint for network communication; created via `socket()` syscall.
+
+- **How does DNS resolution work?**  
+  Resolver queries `/etc/hosts`, then nameservers from `/etc/resolv.conf`.
+
+- **What is ARP?**  
+  Resolves IP to MAC in local network using broadcast.
+
+- **What is MTU and what happens if exceeded?**  
+  Maximum Transmission Unit; exceeding causes fragmentation or packet drop.
+
+- **How to check open ports?**  
+  `ss -tuln`, `netstat -tuln`, or `lsof -i`.
+
+- **What is NAT?**  
+  Translates internal IPs to public IPs for outbound traffic (masquerading).
+
+- **How do you capture packets?**  
+  Use `tcpdump`, `wireshark`, or `ip -s link` for interface stats.
+
+- **What is the difference between `iptables` and `nftables`?**  
+  `iptables` is legacy; `nftables` is newer, with unified framework and better performance.
+
+---
+
+**File Systems**
+
+- **What is a filesystem?**  
+  Structure to organize, store, and retrieve data on disk with metadata, directories, and permissions.
+
+- **What’s the difference between ext4, xfs, and btrfs?**  
+  ext4: stable, default on many distros. xfs: high-performance, large files. btrfs: snapshotting, checksums.
+
+- **How do you mount a filesystem?**  
+  `mount /dev/sdX /mnt`; see all mounts with `mount`, `/proc/mounts`, or `df -h`.
+
+- **What’s the purpose of `fstab`?**  
+  `/etc/fstab` lists persistent mount configs auto-mounted at boot.
+
+- **What are inodes?**  
+  Metadata structure storing file attributes and block pointers.
+
+- **How do you check disk usage?**  
+  `df -h` (filesystem level), `du -sh *` (directory level).
+
+- **What’s the difference between hard and soft links?**  
+  Hard links point to the same inode; soft links point to the filename path.
+
+- **What is journaling in a filesystem?**  
+  Logs metadata updates to ensure consistency after crashes (e.g., ext4, xfs).
+
+- **What causes `No space left on device` even when `df` shows space?**  
+  Inode exhaustion — check with `df -i`.
+
+---
+
+**Performance**
+
+- **How to monitor CPU usage?**  
+  `top`, `htop`, `mpstat`, `pidstat`, or `perf top`.
+
+- **What is iowait?**  
+  Time CPU spends waiting for I/O to complete, not doing useful work.
+
+- **How to check memory usage?**  
+  `free -m`, `vmstat`, `cat /proc/meminfo`.
+
+- **Difference between cache and buffer memory?**  
+  Buffers: metadata for block devices; Cache: page cache for file contents.
+
+- **How to trace syscall or function performance?**  
+  `strace`, `perf record`, `bpftrace`, `ftrace`.
+
+- **How to find slow I/O or disk bottlenecks?**  
+  `iostat -x`, `iotop`, `blktrace`, `dstat`, `sar`.
+
+- **How does Linux use the page cache?**  
+  Files are cached in RAM; reads go to cache if present, writes delayed.
+
+- **How to clear page cache?**  
+  `echo 3 > /proc/sys/vm/drop_caches` (only for testing, not prod use).
+
+- **How do you find high CPU or memory processes?**  
+  `top`, `ps aux --sort=-%cpu`, `ps aux --sort=-%mem`.
+
+- **How to profile a binary or function?**  
+  Use `perf`, `gprof`, `valgrind`, `bpftrace`, or compiler instrumentation.
