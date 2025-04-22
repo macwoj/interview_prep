@@ -291,7 +291,32 @@ Want a real demo example with hard links or inode exhaustion simulation?
 
 # soft/hard link
 
-In Linux, a hard link is an additional directory entry that points directly to the inode (the actual data) of a file, meaning multiple filenames can refer to the same content, and deleting one does not remove the data as long as another hard link exists. In contrast, a soft link (or symbolic link) is a pointer to the file path, similar to a shortcut; if the target file is deleted, the symlink becomes broken. Hard links can't span filesystems or point to directories, while soft links can, making them more flexible but less robust if the target path changes.
+In Linux, **hard links** and **soft links** (also called **symbolic links**) are two ways to reference files. Here's a compact comparison:
+
+- **Hard link**
+  - Points directly to the file’s inode (same data on disk)
+  - Multiple filenames for the same file
+  - Changes to content affect all hard links
+  - Deleting one link doesn’t delete the data until all hard links are removed
+  - Cannot link to directories (by default)
+  - Cannot cross filesystems
+
+- **Soft link (symlink)**
+  - Points to the pathname of the target file
+  - Like a shortcut or alias
+  - If target is deleted, symlink becomes broken (dangling)
+  - Can link to directories
+  - Can cross filesystem boundaries
+
+**Commands:**
+- Create hard link: `ln original.txt hardlink.txt`
+- Create soft link: `ln -s original.txt symlink.txt`
+
+To check:
+- `ls -li` shows inode numbers (same for hard links)
+- `ls -l` shows `->` for symlinks
+
+Use hard links when you need multiple names for the same file data. Use soft links for flexible shortcuts.
 
 # User and Kernel space 
 
