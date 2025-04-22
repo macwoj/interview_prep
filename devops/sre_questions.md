@@ -286,9 +286,6 @@ Summary:
   - Each file/dir is identified by an inode number
   - Useful for checking hard links (same inode, different name/dir)
 
-Want a real demo example with hard links or inode exhaustion simulation?
-
-
 # soft/hard link
 
 In Linux, **hard links** and **soft links** (also called **symbolic links**) are two ways to reference files. Here's a compact comparison:
@@ -300,6 +297,7 @@ In Linux, **hard links** and **soft links** (also called **symbolic links**) are
   - Deleting one link doesn’t delete the data until all hard links are removed
   - Cannot link to directories (by default)
   - Cannot cross filesystems
+  - Creates directory entry
 
 - **Soft link (symlink)**
   - Points to the pathname of the target file
@@ -640,8 +638,6 @@ Here’s a compact list of common Linux interview questions and answers, especia
   Use `perf`, `gprof`, `valgrind`, `bpftrace`, or compiler instrumentation.
 
 ---
-
-Here’s a compact list of Linux **kernel** and **networking** interview questions with answers:
 
 **Kernel**
 
