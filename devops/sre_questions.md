@@ -49,6 +49,24 @@ When you type a command in the shell, the shell first parses the input, performi
 - input is detached from the terminal (stdin is usually set to `/dev/null`)  
 - job control features like `jobs`, `fg`, and `bg` can still be used in the current shell session while it's active
 
+# commands
+
+## awk
+`awk` is a command-line tool and scripting language for processing and analyzing text files. It works line by line, splitting lines into fields, and allows pattern matching, field extraction, and data transformation.
+
+Typical use cases:
+- Extract columns: `awk '{print $1, $3}' file.txt`
+- Pattern matching: `awk '/error/ {print $0}' log.txt`
+- Field-based calculations: `awk '{sum += $2} END {print sum}' file.txt`
+
+## sed
+`sed` is a stream editor used to search, replace, insert, or delete text in a file or input stream, typically line by line.
+
+Common uses:
+- Replace text: `sed 's/foo/bar/' file.txt`
+- Delete lines: `sed '/pattern/d' file.txt`
+- Insert before line: `sed '/pattern/i new line' file.txt`
+
 # Linux process/threads
 
 ## signal handling
@@ -71,6 +89,18 @@ When you type a command in the shell, the shell first parses the input, performi
 - `SIGSEGV`, `SIGFPE`, `SIGILL`, `SIGBUS` can be caught but should be used carefully (used for crashes/faults)
 - Use `sigaction()` to handle signals robustly
 - Masking or ignoring critical signals like `SIGKILL`/`SIGSTOP` is not possible by design
+
+`kill` sends a signal to a process. Default is `SIGTERM` (15), which asks the process to terminate gracefully.
+
+- `kill PID` — send SIGTERM to process with PID  
+- `kill -9 PID` — send SIGKILL (force kill, cannot be caught or ignored)  
+- `kill -SIGSTOP PID` — pause the process  
+- `kill -SIGCONT PID` — resume a paused process  
+- `kill -l` — list all available signals  
+- `kill -s SIGNAL PID` — send a specific signal by name or number  
+- `kill -- -PGID` — kill all processes in a process group
+
+Use with `ps`, `top`, or `pgrep` to find PIDs.
 
 ## thread vs process
 - **Process**: A process is an independent program in execution with its own memory space, file descriptors, and system resources. Each process has a unique **PID** (Process ID) and is managed by the kernel. Processes don’t share memory unless explicitly set up via inter-process communication (IPC).
@@ -207,7 +237,29 @@ Summary:
 
 # Whats an inode
 
-An **inode** (index node) in Linux is a data structure used by file systems (like ext4, xfs, etc.) to store **metadata about a file or directory** — but **not** the file’s name or its actual data.
+- An **inode** (index node) in Linux is a data structure used by file systems (like ext4, xfs, etc.) to store **metadata about a file or directory** — but **not** the file’s name or its actual data.
+
+- **`df -i`**: shows inode usage on filesystems  
+  ```bash
+  $ df -i
+  Filesystem       Inodes  IUsed   IFree IUse% Mounted on
+  /dev/sda1       6553600 102400 6451200    2% /
+  ```
+
+  - `IUsed`: number of inodes used (roughly number of files/dirs)
+  - `IFree`: remaining inodes
+  - Useful when `df -h` shows free space but you can’t create new files — inode exhaustion.
+
+- **`ls -i`**: shows the inode number of files  
+  ```bash
+  $ ls -i
+  131073 file1.txt   131074 file2.txt   131075 dir1
+  ```
+  - Each file/dir is identified by an inode number
+  - Useful for checking hard links (same inode, different name/dir)
+
+Want a real demo example with hard links or inode exhaustion simulation?
+
 
 # soft/hard link
 
@@ -260,3 +312,333 @@ This design ensures that bugs or vulnerabilities in user applications are contai
 - If the page is not in RAM, a **page fault** occurs and the OS loads it from disk (swap) into memory.
 
 In short, virtual memory allows efficient and secure use of memory by abstracting physical memory and using disk as an extension when needed.
+
+---
+
+Here’s a compact list of common Linux interview questions and answers, especially relevant for SRE, DevOps, or backend roles:
+
+- **What is the difference between a process and a thread?**  
+  Process has its own memory space; threads share memory within a process.
+
+- **What are zombie processes?**  
+  Terminated processes whose exit status hasn't been read by the parent.
+
+- **What is the difference between hard and soft links?**  
+  Hard links point to the inode; soft links (symlinks) point to the filename.
+
+- **How does `fork()` and `exec()` work?**  
+  `fork()` creates a new process; `exec()` replaces current process image with a new one.
+
+- **What is a signal and how is it handled?**  
+  Asynchronous notification to a process; handled by kernel or user-defined signal handlers.
+
+- **What does `nohup` do?**  
+  Prevents a command from being terminated when the session ends.
+
+- **How do pipes work in Linux?**  
+  Unidirectional inter-process communication using file descriptors (stdin/stdout redirection).
+
+- **What are named pipes (FIFOs)?**  
+  Pipes with a name in the filesystem; allow unrelated processes to communicate.
+
+- **What is `nice` and how does it affect processes?**  
+  Sets process priority; lower value = higher priority.
+
+- **What is a filesystem?**  
+  Organizes files on storage; includes metadata, permissions, structure.
+
+- **How do you troubleshoot a failed file write?**  
+  Check disk space (`df`), inode usage, permissions, dmesg logs, and mount options.
+
+- **How do you check open network connections?**  
+  `lsof -i`, `netstat -tulnp`, or `ss -tulnp`.
+
+- **How does virtual memory work?**  
+  Abstracts physical memory, uses paging/swapping; managed by the kernel.
+
+- **What are cgroups?**  
+  Kernel feature to limit, isolate, and monitor resource usage of process groups.
+
+- **What is the boot process in Linux?**  
+  BIOS → Bootloader → Kernel → `init`/`systemd` → Services → Login.
+
+- **How do you set up a signal handler?**  
+  Use `signal(SIGINT, handler_function)` in C; some signals like SIGKILL, SIGSTOP can't be handled.
+
+- **How to monitor CPU and IO performance?**  
+  `top`, `htop`, `iostat`, `vmstat`, `pidstat`.
+
+- **Where is DNS information stored?**  
+  `/etc/resolv.conf`, `/etc/hosts`, and local DNS caches.
+
+- **What does `du -sh *` show?**  
+  Disk usage summary of each file/dir in current directory; `-s` for summary, `-h` for human-readable.
+
+- **How do you find all NFS mounts?**  
+  `mount | grep nfs`, or check `/proc/mounts` or `df -hT | grep nfs`.
+
+Here’s a compact list of Linux **kernel** and **networking** interview questions with answers:
+
+**Kernel**
+
+- **What is kernel space vs user space?**  
+  Kernel space runs privileged code; user space runs applications with limited access.
+
+- **How are system calls handled?**  
+  User calls trap into kernel via syscall interface; kernel executes and returns to user space.
+
+- **What is a context switch?**  
+  Switch between processes/threads by saving and loading CPU state.
+
+- **What causes high system CPU usage?**  
+  Excessive kernel activity—syscalls, interrupts, I/O, memory management.
+
+- **How does the kernel manage memory?**  
+  Uses virtual memory, page tables, LRU caches, swapping, and slab/slub allocators.
+
+- **What are interrupts?**  
+  Hardware or software events triggering the kernel to stop current execution and run a handler.
+
+- **How does the kernel schedule processes?**  
+  Uses Completely Fair Scheduler (CFS); considers priority, fairness, I/O wait, etc.
+
+- **What are loadable kernel modules?**  
+  Drivers or features that can be added/removed at runtime with `insmod`, `rmmod`.
+
+- **How to trace kernel activity?**  
+  Tools like `strace`, `perf`, `ftrace`, `bpftrace`, and `/proc`.
+
+---
+
+# NFS
+
+NFS (Network File System) lets a system mount and use files on a remote server as if they were local. Here's how it works, step-by-step:
+
+- **Exporting**: the NFS server shares (exports) directories by listing them in `/etc/exports`  
+- **Mounting**: a client mounts the remote directory using `mount server:/remote/path /local/mountpoint`  
+- **RPC and Portmap**: communication relies on RPC (Remote Procedure Calls); clients use `rpcbind` to discover which ports NFS services are using  
+- **Protocols**: uses different protocols for different operations:
+  - `NFS` protocol: for actual file operations
+  - `Mount` protocol: to mount/unmount filesystems
+  - `Lockd`/`Statd`: to coordinate file locking
+- **Stateless vs Stateful**:
+  - NFSv3 is stateless (each request is self-contained)
+  - NFSv4 adds stateful features (file locking, ACLs, etc.)
+- **Caching**: clients cache data/metadata locally for performance, but must periodically validate it  
+- **Security**: traditional NFS relies on UID/GID matching; newer versions support Kerberos and `AUTH_SYS` for access control  
+- **Write Semantics**:
+  - Writes may be buffered client-side
+  - `sync` option forces flushes to disk
+  - risk of data loss on crashes if using `async`
+
+You can list mounted NFS shares with `mount -t nfs` or `findmnt`, and check exports with `showmount -e server`.
+
+# File permissions
+Linux file permissions control access for:
+
+- **Owner / Group / Others**
+- Each gets: `r` (read=4), `w` (write=2), `x` (execute=1)
+
+Shown via `ls -l`:
+- Example: `-rwxr-xr--`
+  - `-`: file (or `d` for directory)
+  - `rwx`: owner (7)
+  - `r-x`: group (5)
+  - `r--`: others (4)
+
+Octal form:
+- `rwx = 7`, `rw- = 6`, `r-- = 4`, etc.
+- Use with `chmod`: e.g., `chmod 754 file`
+
+Common commands:
+- `chmod`: change perms
+- `chown`: change owner
+- `chgrp`: change group
+
+Defaults controlled by `umask`.
+
+---
+
+Here’s a compact list of common Linux interview questions and answers, especially relevant for SRE, DevOps, or backend roles:
+
+- **What is the difference between a process and a thread?**  
+  Process has its own memory space; threads share memory within a process.
+
+- **What are zombie processes?**  
+  Terminated processes whose exit status hasn't been read by the parent.
+
+- **What is the difference between hard and soft links?**  
+  Hard links point to the inode; soft links (symlinks) point to the filename.
+
+- **How does `fork()` and `exec()` work?**  
+  `fork()` creates a new process; `exec()` replaces current process image with a new one.
+
+- **What is a signal and how is it handled?**  
+  Asynchronous notification to a process; handled by kernel or user-defined signal handlers.
+
+- **What does `nohup` do?**  
+  Prevents a command from being terminated when the session ends.
+
+- **How do pipes work in Linux?**  
+  Unidirectional inter-process communication using file descriptors (stdin/stdout redirection).
+
+- **What are named pipes (FIFOs)?**  
+  Pipes with a name in the filesystem; allow unrelated processes to communicate.
+
+- **What is `nice` and how does it affect processes?**  
+  Sets process priority; lower value = higher priority.
+
+- **What is a filesystem?**  
+  Organizes files on storage; includes metadata, permissions, structure.
+
+- **How do you troubleshoot a failed file write?**  
+  Check disk space (`df`), inode usage, permissions, dmesg logs, and mount options.
+
+- **How do you check open network connections?**  
+  `lsof -i`, `netstat -tulnp`, or `ss -tulnp`.
+
+- **How does virtual memory work?**  
+  Abstracts physical memory, uses paging/swapping; managed by the kernel.
+
+- **What are cgroups?**  
+  Kernel feature to limit, isolate, and monitor resource usage of process groups.
+
+- **What is the boot process in Linux?**  
+  BIOS → Bootloader → Kernel → `init`/`systemd` → Services → Login.
+
+- **How do you set up a signal handler?**  
+  Use `signal(SIGINT, handler_function)` in C; some signals like SIGKILL, SIGSTOP can't be handled.
+
+- **How to monitor CPU and IO performance?**  
+  `top`, `htop`, `iostat`, `vmstat`, `pidstat`.
+
+- **Where is DNS information stored?**  
+  `/etc/resolv.conf`, `/etc/hosts`, and local DNS caches.
+
+- **What does `du -sh *` show?**  
+  Disk usage summary of each file/dir in current directory; `-s` for summary, `-h` for human-readable.
+
+- **How do you find all NFS mounts?**  
+  `mount | grep nfs`, or check `/proc/mounts` or `df -hT | grep nfs`.
+
+---
+
+**File Systems**
+
+- **What is a filesystem?**  
+  Structure to organize, store, and retrieve data on disk with metadata, directories, and permissions.
+
+- **What’s the difference between ext4, xfs, and btrfs?**  
+  ext4: stable, default on many distros. xfs: high-performance, large files. btrfs: snapshotting, checksums.
+
+- **How do you mount a filesystem?**  
+  `mount /dev/sdX /mnt`; see all mounts with `mount`, `/proc/mounts`, or `df -h`.
+
+- **What’s the purpose of `fstab`?**  
+  `/etc/fstab` lists persistent mount configs auto-mounted at boot.
+
+- **What are inodes?**  
+  Metadata structure storing file attributes and block pointers.
+
+- **How do you check disk usage?**  
+  `df -h` (filesystem level), `du -sh *` (directory level).
+
+- **What’s the difference between hard and soft links?**  
+  Hard links point to the same inode; soft links point to the filename path.
+
+- **What is journaling in a filesystem?**  
+  Logs metadata updates to ensure consistency after crashes (e.g., ext4, xfs).
+
+- **What causes `No space left on device` even when `df` shows space?**  
+  Inode exhaustion — check with `df -i`.
+
+---
+
+**Performance**
+
+- **How to monitor CPU usage?**  
+  `top`, `htop`, `mpstat`, `pidstat`, or `perf top`.
+
+- **What is iowait?**  
+  Time CPU spends waiting for I/O to complete, not doing useful work.
+
+- **How to check memory usage?**  
+  `free -m`, `vmstat`, `cat /proc/meminfo`.
+
+- **Difference between cache and buffer memory?**  
+  Buffers: metadata for block devices; Cache: page cache for file contents.
+
+- **How to trace syscall or function performance?**  
+  `strace`, `perf record`, `bpftrace`, `ftrace`.
+
+- **How to find slow I/O or disk bottlenecks?**  
+  `iostat -x`, `iotop`, `blktrace`, `dstat`, `sar`.
+
+- **How does Linux use the page cache?**  
+  Files are cached in RAM; reads go to cache if present, writes delayed.
+
+- **How to clear page cache?**  
+  `echo 3 > /proc/sys/vm/drop_caches` (only for testing, not prod use).
+
+- **How do you find high CPU or memory processes?**  
+  `top`, `ps aux --sort=-%cpu`, `ps aux --sort=-%mem`.
+
+- **How to profile a binary or function?**  
+  Use `perf`, `gprof`, `valgrind`, `bpftrace`, or compiler instrumentation.
+
+---
+
+Here’s a compact list of Linux **kernel** and **networking** interview questions with answers:
+
+**Kernel**
+
+- **What is kernel space vs user space?**  
+  Kernel space runs privileged code; user space runs applications with limited access.
+
+- **How are system calls handled?**  
+  User calls trap into kernel via syscall interface; kernel executes and returns to user space.
+
+- **What is a context switch?**  
+  Switch between processes/threads by saving and loading CPU state.
+
+- **What causes high system CPU usage?**  
+  Excessive kernel activity—syscalls, interrupts, I/O, memory management.
+
+- **How does the kernel manage memory?**  
+  Uses virtual memory, page tables, LRU caches, swapping, and slab/slub allocators.
+
+- **What are interrupts?**  
+  Hardware or software events triggering the kernel to stop current execution and run a handler.
+
+- **How does the kernel schedule processes?**  
+  Uses Completely Fair Scheduler (CFS); considers priority, fairness, I/O wait, etc.
+
+- **What are loadable kernel modules?**  
+  Drivers or features that can be added/removed at runtime with `insmod`, `rmmod`.
+
+- **How to trace kernel activity?**  
+  Tools like `strace`, `perf`, `ftrace`, `bpftrace`, and `/proc`.
+
+---
+
+TODO
+- cron
+- sshd
+- check status of service 
+  - systemctl status <>
+iptables
+- env variable
+  - printenv
+  - export VAR={}
+- xargs
+- fstab
+- LVM
+- how do you secure ssh
+- /proc/meminfo
+- swap space
+- /etc/hosts
+- /etc/resolv.conf
+- nslookup
+- dmidecode
+- rsync
+- PATH and LD_LIBRARY_PATH

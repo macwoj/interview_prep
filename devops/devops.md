@@ -183,9 +183,20 @@ kill process
 ```bash
 #list threads
 ps -ef | grep
-
 kill -9 id
 ```
+
+`kill` sends a signal to a process. Default is `SIGTERM` (15), which asks the process to terminate gracefully.
+
+- `kill PID` — send SIGTERM to process with PID  
+- `kill -9 PID` — send SIGKILL (force kill, cannot be caught or ignored)  
+- `kill -SIGSTOP PID` — pause the process  
+- `kill -SIGCONT PID` — resume a paused process  
+- `kill -l` — list all available signals  
+- `kill -s SIGNAL PID` — send a specific signal by name or number  
+- `kill -- -PGID` — kill all processes in a process group
+
+Use with `ps`, `top`, or `pgrep` to find PIDs.
 
 ```bash
 perf

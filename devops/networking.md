@@ -243,65 +243,72 @@ Here's a compact breakdown of how packet routing works:
 
 ---
 
-**File Systems**
+**1. DNS resolution failure**
 
-- **What is a filesystem?**  
-  Structure to organize, store, and retrieve data on disk with metadata, directories, and permissions.
-
-- **What’s the difference between ext4, xfs, and btrfs?**  
-  ext4: stable, default on many distros. xfs: high-performance, large files. btrfs: snapshotting, checksums.
-
-- **How do you mount a filesystem?**  
-  `mount /dev/sdX /mnt`; see all mounts with `mount`, `/proc/mounts`, or `df -h`.
-
-- **What’s the purpose of `fstab`?**  
-  `/etc/fstab` lists persistent mount configs auto-mounted at boot.
-
-- **What are inodes?**  
-  Metadata structure storing file attributes and block pointers.
-
-- **How do you check disk usage?**  
-  `df -h` (filesystem level), `du -sh *` (directory level).
-
-- **What’s the difference between hard and soft links?**  
-  Hard links point to the same inode; soft links point to the filename path.
-
-- **What is journaling in a filesystem?**  
-  Logs metadata updates to ensure consistency after crashes (e.g., ext4, xfs).
-
-- **What causes `No space left on device` even when `df` shows space?**  
-  Inode exhaustion — check with `df -i`.
+- **symptom:** can't resolve `example.com`
+- **tools:**
+  - `dig example.com` – test DNS query
+  - `cat /etc/resolv.conf` – check configured nameservers
+  - `ping 8.8.8.8` – test raw network connectivity
+  - `systemd-resolve --status` or `nmcli dev show` – debug local resolver status
 
 ---
 
-**Performance**
+**2. Cannot reach external host**
 
-- **How to monitor CPU usage?**  
-  `top`, `htop`, `mpstat`, `pidstat`, or `perf top`.
+- **symptom:** `curl https://example.com` fails
+- **tools:**
+  - `ping example.com` – test connectivity
+  - `traceroute example.com` – find where packets drop
+  - `curl -v https://example.com` – show connection details
+  - `iptables -L -v` or `nft list ruleset` – check for dropped traffic
+  - `ip route` – confirm default route
+  - `ip a` – ensure IP is assigned
 
-- **What is iowait?**  
-  Time CPU spends waiting for I/O to complete, not doing useful work.
+---
 
-- **How to check memory usage?**  
-  `free -m`, `vmstat`, `cat /proc/meminfo`.
+**3. High network latency or poor throughput**
 
-- **Difference between cache and buffer memory?**  
-  Buffers: metadata for block devices; Cache: page cache for file contents.
+- **symptom:** slow download/upload
+- **tools:**
+  - `ping -c 10 host` – check RTT stability
+  - `mtr host` – live path trace + packet loss
+  - `iperf3 -s` / `iperf3 -c` – test bandwidth between two nodes
+  - `ethtool eth0` – NIC duplex/speed check
+  - `netstat -s` or `ss -s` – check TCP retransmits
 
-- **How to trace syscall or function performance?**  
-  `strace`, `perf record`, `bpftrace`, `ftrace`.
+---
 
-- **How to find slow I/O or disk bottlenecks?**  
-  `iostat -x`, `iotop`, `blktrace`, `dstat`, `sar`.
+**4. Port connectivity issue (e.g. web server not reachable)**
 
-- **How does Linux use the page cache?**  
-  Files are cached in RAM; reads go to cache if present, writes delayed.
+- **symptom:** can't connect to a service
+- **tools:**
+  - `ss -tuln` or `netstat -tuln` – check if port is open
+  - `lsof -i :port` – see which process is listening
+  - `iptables -L` – check firewall rules
+  - `nc -zv localhost 80` – test if port is reachable locally
+  - `curl -v http://localhost:80` – test HTTP connection
 
-- **How to clear page cache?**  
-  `echo 3 > /proc/sys/vm/drop_caches` (only for testing, not prod use).
+---
 
-- **How do you find high CPU or memory processes?**  
-  `top`, `ps aux --sort=-%cpu`, `ps aux --sort=-%mem`.
+**5. ARP-related issues (e.g. can't ping local machine)**
 
-- **How to profile a binary or function?**  
-  Use `perf`, `gprof`, `valgrind`, `bpftrace`, or compiler instrumentation.
+- **symptom:** ping fails on LAN
+- **tools:**
+  - `ip neigh` – check ARP table
+  - `arping IP` – test ARP-level reachability
+  - `tcpdump -e arp` – sniff ARP packets
+  - `bridge link` / `brctl showmacs` – debug MAC learning on bridges
+
+---
+
+**6. Interface issues or drops**
+
+- **symptom:** flaky or dropping network
+- **tools:**
+  - `ip -s link` – check packet drops/errors
+  - `dmesg | grep eth0` – kernel messages for NIC
+  - `ethtool -S eth0` – NIC stats (e.g. crc errors, drops)
+  - `nmcli` / `nmtui` – reinitialize connections
+
+---
