@@ -165,6 +165,34 @@ Here are the main Linux commands to view and change nice values:
 Example:  
 If two CPU-bound processes are running, one with nice 0 and one with nice 10, the one with nice 0 will get more CPU time.
 
+## Manage processes in Linux using `nohup`, `nice`, `bg`, `fg`, and `jobs`:
+
+- `nohup`:  
+  Run a command immune to hangups (e.g., logout), output goes to `nohup.out`  
+  Example: `nohup ./my_script.sh &`
+
+- `nice`:  
+  Start a process with adjusted priority (`-20` = highest, `19` = lowest)  
+  Example: `nice -n 10 ./cpu_heavy_task`
+
+- `jobs`:  
+  List jobs running in the current shell  
+  Example: `jobs` → `[1]+  Running  ./task &`
+
+- `bg`:  
+  Resume a suspended job in the background  
+  Example: `bg %1` resumes job 1 in background
+
+- `fg`:  
+  Bring a background job to foreground  
+  Example: `fg %1` brings job 1 to foreground
+
+Use `&` to run a process in the background directly:  
+Example: `./long_task &`
+
+To suspend a running foreground job: press `Ctrl+Z`  
+To kill a job: `kill %1` (or use `kill PID`)  
+
 ## Pipes
 
 - In Linux, pipes are used for inter-process communication (IPC), allowing data to flow from one process to another, typically in a unidirectional stream. Here's how they work:
