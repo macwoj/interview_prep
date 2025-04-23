@@ -9,6 +9,8 @@
   - kernel ring buffer messages
 - `vmstat 1`
   - virtual memory stat
+  - `procs -----------memory---------- ---swap-- -----io---- -system-- ------cpu-----`
+  - ` r  b   swpd   free   buff  cache   si   so    bi    bo   in   cs us sy id wa st`
   - r: Number of processes running on CPU and waiting for a turn. This provides a better signal than load averages for determining CPU saturation, as it does not include I/O. To interpret: an “r” value greater than the CPU count is saturation.
   - free: Free memory in kilobytes. If there are too many digits to count, you have enough free memory. The “free -m” command, included as command 7, better explains the state of free memory.
   - si, so: Swap-ins and swap-outs. If these are non-zero, you’re out of memory.
@@ -109,6 +111,47 @@ perf stat -e cycles,instructions,cache-misses ./my_app
     - `await`: average time per I/O request → high values = slow disk.
     - `util`: % of time disk was busy → >80% = saturation.
     - `svctm`: average service time per I/O → high = disk strain.
+
+
+### **Scenario**: System is reported to be slow, especially during peak traffic.
+
+**Step-by-step `vmstat` usage**:
+
+```sh
+vmstat 1 10
+```
+
+This gives 10 samples at 1-second intervals.
+
+**Sample output**:
+```
+procs -----------memory---------- ---swap-- -----io---- -system-- ------cpu-----
+ r  b   swpd   free   buff  cache   si   so    bi    bo   in   cs us sy id wa st
+ 2  1  10240  12000  10000 300000    5    6   100   200  150  200 10  5 70 15  0
+ 3  2  10240  10000   8000 280000    0    0   500   300  200  300 12  7 60 21  0
+...
+```
+
+**What to look for**:
+
+- `r > 1`: more runnable processes than CPU cores → CPU contention
+- `b > 0`: processes blocked on I/O → possible disk bottleneck
+- `si`, `so`: non-zero swap in/out → system is memory constrained
+- `wa`: high `%wa` (e.g. >10%) → waiting on I/O
+- `us`, `sy`: shows how CPU time is spent (user vs system)
+
+**Interpretation**:
+
+- High `wa` (15–21%) and non-zero `b` suggests **disk I/O is the bottleneck**
+- Swap usage is small but non-zero (`si` and `so` > 0), indicating **memory pressure**
+- CPU is not saturated (`id` is 60–70%), so not the main issue
+
+**Next steps**:
+
+- Use `iostat` or `iotop` to confirm disk I/O bottlenecks
+- Check which processes are causing I/O using `iotop`
+- Consider adding RAM if swap is frequently used
+- Tune disk I/O or move I/O-heavy apps to faster storage
 
 ## network
 
