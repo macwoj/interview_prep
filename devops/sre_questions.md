@@ -510,7 +510,29 @@ Defaults controlled by `umask`.
 
 ---
 
-Here’s a compact list of common Linux interview questions and answers, especially relevant for SRE, DevOps, or backend roles:
+# /proc
+
+The `/proc` filesystem in Linux is a virtual filesystem that provides a mechanism to access kernel and process information in real time. It doesn't exist on disk but is dynamically created in memory by the kernel.
+
+- `/proc` is mounted at boot time (usually at `/proc`)
+- Each running process has a directory: `/proc/<pid>/`
+  - `/proc/1234/cmdline` – command-line arguments
+  - `/proc/1234/environ` – environment variables
+  - `/proc/1234/fd/` – file descriptors
+  - `/proc/1234/status` – process status
+- System-wide kernel info is also exposed:
+  - `/proc/cpuinfo` – CPU details
+  - `/proc/meminfo` – memory usage
+  - `/proc/loadavg` – load averages
+  - `/proc/uptime` – uptime in seconds
+  - `/proc/version` – kernel version
+  - `/proc/sys/` – tunable kernel parameters (via `sysctl`)
+- Readable like regular files (e.g., `cat /proc/cpuinfo`)
+- Allows inspection and limited control over system and process 
+
+---
+
+# Linux interview questions and answers, especially relevant for SRE, DevOps, or backend roles:
 
 - **What is the difference between a process and a thread?**  
   Process has its own memory space; threads share memory within a process.
