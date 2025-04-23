@@ -153,13 +153,9 @@ procs -----------memory---------- ---swap-- -----io---- -system-- ------cpu-----
 - Consider adding RAM if swap is frequently used
 - Tune disk I/O or move I/O-heavy apps to faster storage
 
-Here’s an example of how to use `iostat` to troubleshoot a disk I/O performance issue on a Linux system:
-
 ---
 
 ### **Scenario**: A web server is experiencing slow response times. You suspect disk I/O might be the bottleneck.
-
----
 
 **Step-by-step with `iostat`**:
 
@@ -192,8 +188,6 @@ Here’s an example of how to use `iostat` to troubleshoot a disk I/O performanc
 5. **Check if it’s a specific mount or device**
    - Combine `iostat` output with `mount` and `df` to trace which filesystem is on the affected device.
 
----
-
 **Follow-up actions**:
 - Add caching (e.g. page cache, Redis) if reads dominate
 - Tune `vm.dirty_ratio` if heavy writeback causes lag
@@ -201,7 +195,7 @@ Here’s an example of how to use `iostat` to troubleshoot a disk I/O performanc
 - Check for filesystem-level issues or fragmentation
 - Use faster disk (e.g. SSD) or RAID
 
-Let me know if you want an example with actual output to analyze.
+---
 
 ## network
 
