@@ -209,6 +209,26 @@ Here's a compact breakdown of how packet routing works:
 - **TTL and fragmentation**  
   Each packet has a TTL (time to live) to prevent infinite loops. Packets may be fragmented if they exceed the MTU of a network segment.
 
+
+# traceroute
+
+On Linux, `traceroute` typically uses **UDP packets** by default, unless specified otherwise. Here's how it works step by step:
+
+- Sends UDP packets to the destination on a high-numbered port (default: 33434)
+- Starts with TTL = 1
+- Each router that receives the packet:
+  - Decrements TTL
+  - If TTL reaches 0, sends back **ICMP "Time Exceeded"**
+- `traceroute` records the responding router’s IP and the round-trip time
+- TTL is incremented by 1 and the process repeats
+- When the packet reaches the final destination:
+  - The host responds with **ICMP "Port Unreachable"** (because the port is likely closed)
+- That signals the end of the route
+
+Options on Linux:
+- `-I`: use ICMP Echo Request instead of UDP (like Windows `tracert`)
+- `-T`: use TCP SYN packets (useful to avoid firewall drops)
+
 ---
 
 - **How does packet routing work?**  
@@ -311,4 +331,30 @@ Here's a compact breakdown of how packet routing works:
   - `ethtool -S eth0` – NIC stats (e.g. crc errors, drops)
   - `nmcli` / `nmtui` – reinitialize connections
 
----
+To view dropped packets in Linux, you can use these commands:
+- `netstat -s`  
+  Shows protocol statistics including dropped packets per protocol (deprecated on newer systems)
+- `ss -s`  
+  Summary of socket statistics including dropped packets
+- `ip -s link`  
+  Displays interface statistics including RX/TX dropped packets per network interface
+- `ethtool -S <interface>`  
+  Detailed per-interface stats (driver-dependent) including specific drop reasons
+- `sar -n DEV 1`  
+  Real-time network device stats every 1 second, including drops (requires `sysstat`)
+- `dmesg | grep -i drop`  
+  Kernel logs that may show drop-related events
+
+To view TCP retransmissions in Linux:
+- `ss -s`  
+  Shows TCP socket statistics, including retransmitted segments.
+- `netstat -s | grep retransmit`  
+  Displays TCP retransmission statistics (deprecated but still works on many systems)
+- `cat /proc/net/netstat | grep Tcp`  
+  Look for lines like `TcpExt` with fields such as `TCPRetransSegs`
+- `sar -n TCP 1`  
+  Monitors TCP retransmissions every second (requires `sysstat`)
+- `tcpdump -i <interface> tcp and 'tcp[13] & 0x04 != 0'`  
+  Captures packets with the RST flag, which may suggest retransmission issues
+- `perf record -e tcp:tcp_retransmit_skb -a`  
+  Trace retransmit events at the kernel level (requires `perf` and kernel tracing support)
