@@ -153,6 +153,56 @@ procs -----------memory---------- ---swap-- -----io---- -system-- ------cpu-----
 - Consider adding RAM if swap is frequently used
 - Tune disk I/O or move I/O-heavy apps to faster storage
 
+Here’s an example of how to use `iostat` to troubleshoot a disk I/O performance issue on a Linux system:
+
+---
+
+### **Scenario**: A web server is experiencing slow response times. You suspect disk I/O might be the bottleneck.
+
+---
+
+**Step-by-step with `iostat`**:
+
+1. **Run iostat with useful flags**  
+   ```bash
+   iostat -xz 1
+   ```
+   - `-x`: extended stats (gives r/s, w/s, %util, await, etc.)
+   - `-z`: omits devices with no activity
+   - `1`: updates every second
+
+2. **Look for high %util**
+   - `%util` near 100% means the disk is fully busy.
+   - Example:
+     ```
+     Device:  %util
+     sda      98.53
+     ```
+     This shows that `/dev/sda` is nearly maxed out.
+
+3. **Check `await` and `svctm`**
+   - `await`: total time I/O requests wait, includes queue time
+   - `svctm`: service time (just time taken to handle the request)
+   - If `await` >> `svctm`, the disk is likely overloaded or there's a queue build-up.
+
+4. **Check `r/s`, `w/s` (reads/writes per second)**
+   - Helps identify if reads or writes dominate.  
+   - Useful if tuning caching or I/O scheduling.
+
+5. **Check if it’s a specific mount or device**
+   - Combine `iostat` output with `mount` and `df` to trace which filesystem is on the affected device.
+
+---
+
+**Follow-up actions**:
+- Add caching (e.g. page cache, Redis) if reads dominate
+- Tune `vm.dirty_ratio` if heavy writeback causes lag
+- Move I/O heavy workloads to another disk
+- Check for filesystem-level issues or fragmentation
+- Use faster disk (e.g. SSD) or RAID
+
+Let me know if you want an example with actual output to analyze.
+
 ## network
 
 - `ifconfig`
