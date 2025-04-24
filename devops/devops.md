@@ -80,20 +80,23 @@ perf stat -e cycles,instructions,cache-misses ./my_app
 
 - app latency
   - `top` - check load, CPU is idle, IO bound
-  - `vmstat 1`, r values ok, memory swap is 0, cpu 
-  - `mpstat -P ALL 1`, sinlge hot cpu can be issue
-  - `iostat -x 1` - disk %util, %util > 60% is an issue
-  - `sar -n DEV 1` - netowrk IO
+  - `vmstat 1`, r values in small range (r values >cpu count means saturation), memory swap is 0, cpu-wa (wait io) is constant -> means disc bottleneck
+  - `mpstat -P ALL 1`, hot cpu can be issue, look at CPU column and imbalance
+  - `iostat -x 1` - disk %util is high, %util > 60% is an issue
+  - `sar -n DEV 1` - network IO, idle
 - app taking forever
-  - `vmstat 1` - no idle time, user/system
-  - `mpstat -P ALL 1`
-  - `pidstat 1` - our app using high cpu  
-  - `iostat -xz 1` - no high io
+  - `vmstat 1` - CPU no idle time (id), high user/system (us/sy)
+  - `mpstat -P ALL 1` - %usr and %sys matches vmstat output
+  - `pidstat 1` - our app using high cpu  (%usr/%system)
+  - `iostat -xz 1` - no high io, await/%util are low
+  - `sar -n DEV 1` - network idle
   - `strace -tp (pgrep process_name)`
 - cpu consumption
-  - `htop` - %CPU no idle, no app consuming
-  - `mpstat 1`, CPU busy 
-  - `perf record -F 99 -a -g -- sleep 10`- short liven proc
+  - `htop` - %Cpu(s) is high at the top, user time (us) is high, %CPU column doesn't have any high cpu tasks?
+  - `mpstat 1`, CPU busy %usr/%sys high
+  - `iostat -x 1` - %util is 0
+  - `sar -n DEV 1` - network idle
+  - `perf record -F 99 -a -g -- sleep 10`- short lived proc
 - check open ports
   - `netstat -tulpn`
 - mount
@@ -197,22 +200,212 @@ procs -----------memory---------- ---swap-- -----io---- -system-- ------cpu-----
 
 ---
 
-## network
+### 🔧 **System Troubleshooting**
 
-- `ifconfig`
-  - View network interface configurations
-- `ip addr show`
-  - newwer ifconfig to see ip and interface info
-- `netstat -tulpn`
-  - network stats
-- `lsof -i`
-- `tcpdump -i any -s0`
-- `ping ip`
-- `telnet`
-- `traceroute`
-- `ssh`
-- `ss -mop`
-  - socket stats
+#### 1. **Q: A Linux server is slow. What’s your first step?**
+**A:**
+- Run `top`, `htop`, or `uptime` to check:
+  - Load average vs. number of CPU cores
+  - CPU or memory bottlenecks
+- Use `vmstat 1`, `iostat -xz 1`, or `dstat` to assess:
+  - CPU steal/wait time
+  - Disk I/O issues
+  - Swap usage
+
+---
+
+#### 2. **Q: How do you check if a process is in a zombie state?**
+**A:**
+- Use `ps aux | grep 'Z'` or `ps -ef -o pid,ppid,state,cmd | grep Z`
+- A zombie (`Z`) process has completed but is not cleaned up by its parent.
+
+---
+
+#### 3. **Q: How do you find which process is using the most memory?**
+**A:**
+- `ps aux --sort=-%mem | head`
+- Or use `smem` or `top` sorted by memory.
+
+---
+
+### 🧠 **Resource Usage & Bottlenecks**
+
+#### 4. **Q: How do you identify high disk I/O?**
+**A:**
+- `iostat -xz 1`: Look at `await`, `util`, and `avgqu-sz`
+- `iotop` (if enabled): Shows real-time disk I/O by process
+
+---
+
+#### 5. **Q: How do you check memory usage and diagnose swap issues?**
+**A:**
+- `free -m` to check used/free/swap memory
+- If swap is heavily used:
+  - Use `vmstat 1` to check `si`/`so` columns (swap in/out)
+  - Use `top` or `smem` to find memory-heavy processes
+
+---
+
+### 🌐 **Networking Issues**
+
+#### 6. **Q: How do you troubleshoot network connectivity issues?**
+**A:**
+- `ping`, `traceroute`, or `mtr` to test connectivity
+- `netstat -tulnp` or `ss -tulnp` to see open ports
+- `tcpdump` or `wireshark` to capture traffic
+- `iptables -L` or `nft list ruleset` for firewall rules
+
+---
+
+#### 7. **Q: A port is not reachable — what do you check?**
+**A:**
+1. Is the service listening? → `ss -tuln | grep <port>`
+2. Firewall rules blocking it? → `iptables`, `nftables`, or `firewalld`
+3. SELinux or AppArmor restrictions? → `getenforce`, `audit2why`
+4. Is the server itself reachable? → `ping`, `telnet`, `nc`
+
+---
+
+### 🧰 **Filesystem & Logs**
+
+#### 8. **Q: How do you find which directory is using the most space?**
+**A:**
+- `du -sh *` in `/`, `/var`, `/home`, etc.
+- `du -ahx / | sort -rh | head -20`
+
+---
+
+#### 9. **Q: How do you monitor log files for errors in real-time?**
+**A:**
+- `tail -f /var/log/syslog` or `/var/log/messages`
+- `journalctl -f` (for systemd systems)
+- Use `grep -i error` or `less +F` for highlighting
+
+---
+
+#### 10. **Q: A cron job isn't running. How do you debug it?**
+**A:**
+- `crontab -l` to confirm it’s scheduled
+- Check `/var/log/cron`, `syslog`, or `journalctl`
+- Ensure script is executable and has correct shebang (`#!/bin/bash`)
+- Check environment differences (cron has limited `PATH`)
+
+---
+
+Great — here’s a **focused set of Linux troubleshooting interview Q&A for SRE roles**, emphasizing **system reliability**, **performance**, and **deep diagnostics**. These are tailored to senior IC or SRE roles at companies like Google, Meta, or Datadog.
+
+---
+
+#### 1. **Q: A production host is reporting high load average. What’s your process to investigate?**
+**A:**
+- Check with `uptime` or `top`:
+  - Compare load average vs. CPU cores
+- Use:
+  - `top`/`htop` → Check for CPU/IO wait
+  - `vmstat 1` → See if waiting on IO (`wa`) or blocked processes (`b`)
+  - `iostat -xz 1` → Look for high disk wait times
+  - `dstat` or `pidstat` → Per-process stats
+- Rule out runaway processes, stuck threads, or disk bottlenecks.
+
+---
+
+#### 2. **Q: How would you debug a container using high CPU on a Kubernetes node?**
+**A:**
+- Use `kubectl top pod`, then drill into the node:
+  - `docker stats` or `crictl top`
+  - `ps aux --sort=-%cpu`, `perf top` for flame graph-level insights
+- Use `strace -p <pid>` or `perf record` to analyze syscall behavior
+- Look for tight loops, lock contention, or JIT hot paths.
+
+---
+
+#### 3. **Q: A service in Kubernetes is timing out. Where do you start?**
+**A:**
+1. **Check service health**:
+   - `kubectl describe pod`, `logs`, and `events`
+2. **Validate network connectivity**:
+   - `nslookup`, `curl`, `kubectl exec <pod> -- curl <endpoint>`
+3. **Inspect kube-proxy / iptables / CNI layer**:
+   - `iptables -L -t nat`, `conntrack -L`
+4. **Trace packets**:
+   - Use `tcpdump`, `traceroute`, `mtr` from pod/node
+
+---
+
+#### 4. **Q: How do you investigate a process stuck in uninterruptible sleep (`D` state)?**
+**A:**
+- Check `ps -eo pid,stat,comm,wchan | grep ^D`
+- Usually IO-related (waiting on disk/NFS/socket)
+- Use:
+  - `lsof -p <pid>` to see file handles
+  - `strace -p <pid>` (may hang if it’s truly stuck)
+  - Check dmesg or `iotop` for storage issues
+  - Possible causes: disk failure, NFS hang, kernel bugs
+
+---
+
+#### 5. **Q: A host is repeatedly going OOM (Out of Memory). What do you do?**
+**A:**
+- `dmesg | grep -i oom` → confirm kernel OOM killer activity
+- `journalctl -k` or `/var/log/messages`
+- Use `smem`, `ps aux --sort=-%mem`, or `cgroups` stats to find leaky process
+- Validate swap behavior with `vmstat`, `free -m`
+- Implement cgroup memory limits or container memory caps
+
+---
+
+#### 6. **Q: How do you identify and resolve file descriptor leaks?**
+**A:**
+- `lsof -p <pid>` → list open fds
+- `ls /proc/<pid>/fd/ | wc -l` → count
+- `ulimit -n` → soft/hard limits
+- Alerting via Prometheus node exporter (`node_filefd_allocated`)
+- Fix via app-level fd cleanup, increase limits, or restart loop leaks
+
+---
+
+#### 7. **Q: A node isn’t responding to SSH. How do you debug remotely?**
+**A:**
+- Use out-of-band access (e.g., AWS SSM, IPMI, or GCP Serial Console)
+- Check `journalctl` or `/var/log/auth.log` for `sshd` failures
+- Validate that `sshd` is running and port 22 is open
+- Check `iptables`, network ACLs, or `fail2ban` blocks
+- If it’s alive but unresponsive, may need to trigger soft reboot via cloud API
+
+---
+
+#### 8. **Q: What tools do you use to trace system calls or performance issues?**
+**A:**
+- **strace** – syscall tracing
+- **lsof** – file and socket usage
+- **perf** – CPU profiling
+- **bcc-tools / bpftrace** – in-kernel tracing (e.g., `execsnoop`, `opensnoop`)
+- **gdb** – for native binary inspection
+- **systemtap / eBPF** – deep tracing of kernel behavior
+
+---
+
+#### 9. **Q: How do you ensure kernel logs are monitored and acted upon?**
+**A:**
+- Use `journalctl -k` or `dmesg` for access
+- Centralize via log aggregation (e.g., Fluentd, rsyslog, journald → Elasticsearch)
+- Alert on patterns: OOM kills, `ext4` errors, hardware failures
+- Integrate with incident tooling (e.g., PagerDuty, Grafana alerts)
+
+---
+
+#### 10. **Q: What would you do if you find high CPU in `ksoftirqd`?**
+**A:**
+- Indicates excessive soft IRQ handling (typically due to high network/disk IO)
+- Check with:
+  - `top` or `pidstat -w`
+  - `mpstat -P ALL`, `cat /proc/interrupts`
+- Possible mitigations:
+  - Tune NIC IRQ affinity (`irqbalance`, `ethtool`)
+  - Use multi-queue NICs with RSS
+  - Offload packet processing (GRO/LRO, XDP)
+
+---
 
 disk is full
 

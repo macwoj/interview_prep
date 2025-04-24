@@ -229,7 +229,168 @@ Options on Linux:
 - `-I`: use ICMP Echo Request instead of UDP (like Windows `tracert`)
 - `-T`: use TCP SYN packets (useful to avoid firewall drops)
 
+# `ifconfig`
+  - View network interface configurations
+  - lo loopback interface
+
+```
+eth0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
+        inet 192.168.1.100  netmask 255.255.255.0  broadcast 192.168.1.255
+        inet6 fe80::1a2b:3c4d:5e6f:7g8h  prefixlen 64  scopeid 0x20<link>
+        ether 00:11:22:33:44:55  txqueuelen 1000  (Ethernet)
+        RX packets 12345  bytes 9876543 (9.8 MB)
+        RX errors 0  dropped 2  overruns 0  frame 0
+        TX packets 6789  bytes 4567890 (4.5 MB)
+        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+```
+
+### Explanation:
+
+- `eth0`: Name of the network interface
+
+- `flags=4163<UP,BROADCAST,RUNNING,MULTICAST>`:
+  - `UP`: Interface is enabled
+  - `BROADCAST`: Supports broadcast
+  - `RUNNING`: Interface is operational
+  - `MULTICAST`: Can send/receive multicast traffic
+
+- `mtu 1500`: Maximum Transmission Unit, max packet size in bytes
+
+- `inet 192.168.1.100`: IPv4 address assigned to the interface
+
+- `netmask 255.255.255.0`: Subnet mask
+
+- `broadcast 192.168.1.255`: Broadcast address for the subnet
+
+- `inet6 fe80::...`: IPv6 address with link-local scope
+
+- `ether 00:11:22:33:44:55`: MAC (hardware) address
+
+- `txqueuelen 1000`: Length of transmit queue
+
+- `(Ethernet)`: Link type
+
+- `RX packets 12345`: Total received packets
+
+- `RX bytes 9876543`: Total bytes received (in bytes and human-readable)
+
+- `RX errors, dropped, overruns, frame`: Receive errors and dropped packets
+
+- `TX packets 6789`: Total transmitted packets
+
+- `TX bytes 4567890`: Total bytes transmitted
+
+- `TX errors, dropped, overruns, carrier, collisions`: Transmit errors and problems
+
+# netstat
+
+The command `netstat -tulpn` displays active network connections and listening ports on a Linux system, along with the processes that own them.
+
+Here's what each flag means:
+
+- `-t` : TCP connections
+- `-u` : UDP connections
+- `-l` : Show only listening sockets
+- `-p` : Show the process ID and name of the program using the socket
+- `-n` : Show numerical addresses instead of resolving hostnames and ports
+
+### Sample Output
+```
+Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name
+tcp        0      0 0.0.0.0:22              0.0.0.0:*               LISTEN      1056/sshd
+tcp6       0      0 :::80                   :::*                    LISTEN      1480/nginx
+udp        0      0 0.0.0.0:68              0.0.0.0:*                           778/dhclient
+```
+
+### Columns Explained
+
+- **Proto**: Protocol (`tcp`, `udp`, `tcp6`, or `udp6`)
+- **Recv-Q**: Received queue (data received but not yet processed by the app)
+- **Send-Q**: Sent queue (data sent but not yet acknowledged by the remote host)
+- **Local Address**: IP address and port on the local machine
+- **Foreign Address**: Remote IP address and port (will be `*` for listening sockets)
+- **State**: TCP state (like `LISTEN`, `ESTABLISHED`). For UDP, this is usually blank.
+- **PID/Program name**: Process ID and name of the application using the port
+
+The `netstat -r` command displays the **kernel routing table** on a Linux system. This table determines how network packets are routed to their destination.
+
+Here’s how to interpret the output:
+
+```
+Kernel IP routing table
+Destination     Gateway         Genmask         Flags   MSS Window  irtt Iface
+0.0.0.0         192.168.1.1     0.0.0.0         UG      0   0        0    eth0
+192.168.1.0     0.0.0.0         255.255.255.0   U       0   0        0    eth0
+```
+
+Key columns:
+
+- **Destination**: The destination network or IP address.
+  - `0.0.0.0` means "default route" (used when no other route matches).
+- **Gateway**: The gateway IP address through which to send packets.
+  - `0.0.0.0` means packets go directly to the destination (no gateway needed).
+- **Genmask**: The subnet mask for the destination.
+- **Flags**:
+  - `U` = route is up
+  - `G` = uses a gateway
+- **Iface**: The network interface used (e.g., `eth0`, `wlan0`).
+
+In summary:
+
+- It shows **how your system decides where to send packets**.
+- Use it to debug **routing issues**, especially default gateway problems or when multiple interfaces are in use.
+
+
+- `ip addr show`
+  - newwer ifconfig to see ip and interface info
+- `netstat -tulpn`
+  - network stats
+- `lsof -i`
+- `tcpdump -i any -s0`
+- `ping ip`
+- `telnet`
+- `traceroute`
+- `ssh`
+- `telnet`
+- `ss -mop`
+  - socket stats
+
 ---
+
+# sar
+
+The `sar -n DEV 1` command is used to monitor network device statistics on Linux, updated every second. Here's a breakdown:
+
+- `sar`: System Activity Reporter, a tool that collects, reports, and saves system activity information.
+- `-n DEV`: Reports network device statistics (e.g., eth0, lo).
+- `1`: Interval in seconds between each report (in this case, every 1 second).
+
+### Sample Output Columns:
+You’ll typically see output like this:
+
+```
+Time       IFACE   rxpck/s  txpck/s   rxkB/s   txkB/s   rxcmp/s  txcmp/s  rxmcst/s
+12:00:00   eth0    102.00   120.00    12.00    15.00    0.00     0.00     1.00
+```
+
+### Key Columns:
+- `IFACE`: Network interface name (e.g., eth0)
+- `rxpck/s`: Received packets per second
+- `txpck/s`: Transmitted packets per second
+- `rxkB/s`: Received kilobytes per second
+- `txkB/s`: Transmitted kilobytes per second
+- `rxcmp/s`, `txcmp/s`: Compressed packets received/transmitted per second (usually 0)
+- `rxmcst/s`: Multicast packets received per second
+
+### Use Case:
+Use `sar -n DEV 1` to:
+- Monitor real-time network bandwidth usage
+- Identify spikes in traffic
+- Troubleshoot network throughput issues
+
+---
+
+# Questions
 
 - **How does packet routing work?**  
   Routing table (`ip route`) determines next hop; kernel uses longest prefix match.

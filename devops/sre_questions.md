@@ -286,6 +286,31 @@ Summary:
   - Each file/dir is identified by an inode number
   - Useful for checking hard links (same inode, different name/dir)
 
+# `PATH` and `LD_LIBRARY_PATH`:
+
+### `PATH`
+- Used by the **shell** (like `bash`, `zsh`) to locate **executables**
+- When you type a command, the shell looks through the directories in `PATH` (in order) to find the corresponding binary
+- Example:
+  ```sh
+  export PATH=/opt/mytools/bin:$PATH
+  ```
+  This makes `/opt/mytools/bin/mytool` available by just typing `mytool`
+
+### `LD_LIBRARY_PATH`
+- Used by the **dynamic linker** (`ld.so`) to locate **shared libraries** (`.so` files) at runtime
+- If your executable depends on a shared library not in standard system paths (`/lib`, `/usr/lib`, etc.), you can add its path here
+- Example:
+  ```sh
+  export LD_LIBRARY_PATH=/opt/mylibs/lib:$LD_LIBRARY_PATH
+  ```
+  This ensures `/opt/mylibs/lib/libexample.so` is found when an executable tries to load it
+
+### Key Differences
+- `PATH` is for finding **programs**
+- `LD_LIBRARY_PATH` is for finding **libraries** needed by those programs
+- Misusing `LD_LIBRARY_PATH` (e.g. setting it globally) can cause hard-to-debug issues, especially with system libraries
+
 # soft/hard link
 
 In Linux, **hard links** and **soft links** (also called **symbolic links**) are two ways to reference files. Here's a compact comparison:
