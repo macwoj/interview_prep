@@ -193,6 +193,43 @@ Example: `./long_task &`
 To suspend a running foreground job: press `Ctrl+Z`  
 To kill a job: `kill %1` (or use `kill PID`)  
 
+# Pinning
+
+To pin a process to a specific CPU or set of CPUs in Linux, use the `taskset` command or `sched_setaffinity` system call.
+
+### 1. Using `taskset`
+
+#### Start a process with specific CPU affinity:
+```bash
+taskset -c 0,2 ./myprogram
+```
+- Pins the process to CPUs 0 and 2.
+
+#### Pin an existing process:
+```bash
+taskset -cp 0,2 <pid>
+```
+- Sets the CPU affinity of an already running process.
+
+#### View current affinity:
+```bash
+taskset -cp <pid>
+```
+
+### 2. Using `sched_setaffinity` in C (programmatically):
+```c
+cpu_set_t mask;
+CPU_ZERO(&mask);
+CPU_SET(0, &mask); // CPU 0
+
+sched_setaffinity(0, sizeof(mask), &mask);
+```
+
+### Notes
+- `-c` uses a list or range: `0,2-3`
+- You can use `htop` or `ps -o pid,psr,comm` to see which CPU a process is currently running on.
+- Affinity does not *guarantee* a process stays on that CPU, but restricts the kernel's scheduler to the given set.
+
 ## Pipes
 
 - In Linux, pipes are used for inter-process communication (IPC), allowing data to flow from one process to another, typically in a unidirectional stream. Here's how they work:
@@ -388,103 +425,6 @@ This design ensures that bugs or vulnerabilities in user applications are contai
 - If the page is not in RAM, a **page fault** occurs and the OS loads it from disk (swap) into memory.
 
 In short, virtual memory allows efficient and secure use of memory by abstracting physical memory and using disk as an extension when needed.
-
----
-
-Here’s a compact list of common Linux interview questions and answers, especially relevant for SRE, DevOps, or backend roles:
-
-- **What is the difference between a process and a thread?**  
-  Process has its own memory space; threads share memory within a process.
-
-- **What are zombie processes?**  
-  Terminated processes whose exit status hasn't been read by the parent.
-
-- **What is the difference between hard and soft links?**  
-  Hard links point to the inode; soft links (symlinks) point to the filename.
-
-- **How does `fork()` and `exec()` work?**  
-  `fork()` creates a new process; `exec()` replaces current process image with a new one.
-
-- **What is a signal and how is it handled?**  
-  Asynchronous notification to a process; handled by kernel or user-defined signal handlers.
-
-- **What does `nohup` do?**  
-  Prevents a command from being terminated when the session ends.
-
-- **How do pipes work in Linux?**  
-  Unidirectional inter-process communication using file descriptors (stdin/stdout redirection).
-
-- **What are named pipes (FIFOs)?**  
-  Pipes with a name in the filesystem; allow unrelated processes to communicate.
-
-- **What is `nice` and how does it affect processes?**  
-  Sets process priority; lower value = higher priority.
-
-- **What is a filesystem?**  
-  Organizes files on storage; includes metadata, permissions, structure.
-
-- **How do you troubleshoot a failed file write?**  
-  Check disk space (`df`), inode usage, permissions, dmesg logs, and mount options.
-
-- **How do you check open network connections?**  
-  `lsof -i`, `netstat -tulnp`, or `ss -tulnp`.
-
-- **How does virtual memory work?**  
-  Abstracts physical memory, uses paging/swapping; managed by the kernel.
-
-- **What are cgroups?**  
-  Kernel feature to limit, isolate, and monitor resource usage of process groups.
-
-- **What is the boot process in Linux?**  
-  BIOS → Bootloader → Kernel → `init`/`systemd` → Services → Login.
-
-- **How do you set up a signal handler?**  
-  Use `signal(SIGINT, handler_function)` in C; some signals like SIGKILL, SIGSTOP can't be handled.
-
-- **How to monitor CPU and IO performance?**  
-  `top`, `htop`, `iostat`, `vmstat`, `pidstat`.
-
-- **Where is DNS information stored?**  
-  `/etc/resolv.conf`, `/etc/hosts`, and local DNS caches.
-
-- **What does `du -sh *` show?**  
-  Disk usage summary of each file/dir in current directory; `-s` for summary, `-h` for human-readable.
-
-- **How do you find all NFS mounts?**  
-  `mount | grep nfs`, or check `/proc/mounts` or `df -hT | grep nfs`.
-
-Here’s a compact list of Linux **kernel** and **networking** interview questions with answers:
-
-**Kernel**
-
-- **What is kernel space vs user space?**  
-  Kernel space runs privileged code; user space runs applications with limited access.
-
-- **How are system calls handled?**  
-  User calls trap into kernel via syscall interface; kernel executes and returns to user space.
-
-- **What is a context switch?**  
-  Switch between processes/threads by saving and loading CPU state.
-
-- **What causes high system CPU usage?**  
-  Excessive kernel activity—syscalls, interrupts, I/O, memory management.
-
-- **How does the kernel manage memory?**  
-  Uses virtual memory, page tables, LRU caches, swapping, and slab/slub allocators.
-
-- **What are interrupts?**  
-  Hardware or software events triggering the kernel to stop current execution and run a handler.
-
-- **How does the kernel schedule processes?**  
-  Uses Completely Fair Scheduler (CFS); considers priority, fairness, I/O wait, etc.
-
-- **What are loadable kernel modules?**  
-  Drivers or features that can be added/removed at runtime with `insmod`, `rmmod`.
-
-- **How to trace kernel activity?**  
-  Tools like `strace`, `perf`, `ftrace`, `bpftrace`, and `/proc`.
-
----
 
 # NFS
 
@@ -738,3 +678,4 @@ iptables
 - dmidecode
 - rsync
 - PATH and LD_LIBRARY_PATH
+
