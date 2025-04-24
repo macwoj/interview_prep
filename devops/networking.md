@@ -41,6 +41,36 @@ ICMP (Internet Control Message Protocol) operates at the network layer and is us
 ### Interview Highlight:
 > "TLS protects data in transit. I’ve configured mutual TLS between services and used tools like `openssl s_client` to debug cert issues and handshake failures."
 
+## Mutual TLS
+
+Mutual TLS (mTLS) is an extension of the standard TLS (Transport Layer Security) protocol that provides **two-way authentication** between a client and a server.
+
+### What Happens in Regular TLS
+- **Server Authentication**: The server presents its certificate to prove its identity to the client.
+- **Client Verification**: The client checks the server's certificate against trusted CAs (Certificate Authorities).
+
+### What Happens in Mutual TLS
+- **Client Authentication** is added:
+  - Server still presents its certificate.
+  - **Client also presents a certificate** to the server.
+  - The server validates the client's certificate (against its own list of trusted CAs).
+  
+### Key Features
+- **Two-way trust**: Both sides verify each other’s identity.
+- **Certificates**: X.509 certificates are used for authentication.
+- **Encrypted channel**: All communication is encrypted, just like regular TLS.
+
+### Use Cases
+- Microservices communicating securely within a network
+- Zero-trust architectures
+- B2B APIs where client identity must be verified
+- Securing gRPC or Kafka endpoints
+
+### Benefits
+- Strong identity verification
+- Prevents impersonation and man-in-the-middle attacks
+- Fine-grained access control based on client identity
+
 ---
 
 ## 🔹 **HTTP (HyperText Transfer Protocol)**
@@ -253,31 +283,18 @@ eth0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
   - `MULTICAST`: Can send/receive multicast traffic
 
 - `mtu 1500`: Maximum Transmission Unit, max packet size in bytes
-
 - `inet 192.168.1.100`: IPv4 address assigned to the interface
-
 - `netmask 255.255.255.0`: Subnet mask
-
 - `broadcast 192.168.1.255`: Broadcast address for the subnet
-
 - `inet6 fe80::...`: IPv6 address with link-local scope
-
 - `ether 00:11:22:33:44:55`: MAC (hardware) address
-
 - `txqueuelen 1000`: Length of transmit queue
-
 - `(Ethernet)`: Link type
-
 - `RX packets 12345`: Total received packets
-
 - `RX bytes 9876543`: Total bytes received (in bytes and human-readable)
-
 - `RX errors, dropped, overruns, frame`: Receive errors and dropped packets
-
 - `TX packets 6789`: Total transmitted packets
-
 - `TX bytes 4567890`: Total bytes transmitted
-
 - `TX errors, dropped, overruns, carrier, collisions`: Transmit errors and problems
 
 # netstat
