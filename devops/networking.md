@@ -82,8 +82,6 @@ Sure, here’s the original explanation rewritten as a single compact list:
 - Asymmetric encryption (RSA, ECDSA) is used only during the handshake for key exchange and authentication
 - Symmetric encryption (AES, ChaCha20) is used for the actual data transfer due to its speed and efficiency
 
-Let me know if you want this turned into a diagram or command-level walk-through.
-
 ---
 
 ## 🔹 **DNS (Domain Name System)**
@@ -390,6 +388,21 @@ Use `sar -n DEV 1` to:
 
 ---
 
+# Ports
+
+Top 10 most commonly used service ports:
+
+- 22: SSH — secure remote login
+- 23: Telnet — insecure remote login (legacy)
+- 25: SMTP — email sending
+- 53: DNS — domain name resolution
+- 80: HTTP — web traffic (unencrypted)
+- 110: POP3 — receive email (legacy)
+- 143: IMAP — receive email (modern)
+- 443: HTTPS — web traffic (secure)
+- 3306: MySQL — database access
+- 3389: RDP — Windows remote desktop
+
 # Questions
 
 - **How does packet routing work?**  
@@ -513,8 +526,9 @@ To view TCP retransmissions in Linux:
   Displays TCP retransmission statistics (deprecated but still works on many systems)
 - `cat /proc/net/netstat | grep Tcp`  
   Look for lines like `TcpExt` with fields such as `TCPRetransSegs`
-- `sar -n TCP 1`  
-  Monitors TCP retransmissions every second (requires `sysstat`)
+- `sar -n TCP,ETCP 1`  
+  -n TCP,ETCP: Adds extended TCP stats (ETCP) including retransmissions
+  `12:00:01  active/s  passive/s  iseg/s  oseg/s  retrans/s`
 - `tcpdump -i <interface> tcp and 'tcp[13] & 0x04 != 0'`  
   Captures packets with the RST flag, which may suggest retransmission issues
 - `perf record -e tcp:tcp_retransmit_skb -a`  
