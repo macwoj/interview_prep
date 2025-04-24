@@ -28,7 +28,7 @@ Each strategy balances trade-offs:
 - **Cost** (blue-green can double infra temporarily)
 - **Observability** (canary/A-B allow monitoring)
 
-## Seployment Strategies in Kubernetes:
+## Deployment Strategies in Kubernetes:
 
 - **Recreate**  
   In Kubernetes: `spec.strategy.type: Recreate`  
