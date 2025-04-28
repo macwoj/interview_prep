@@ -69,6 +69,57 @@ Common uses:
 
 # Linux process/threads
 
+## **process memory layout** in Linux:
+
+- **Text Segment (Code Segment)**
+  - Stores the compiled program code (machine instructions)
+  - Usually **read-only** to prevent accidental modification
+  - Shared among processes running the same program (for efficiency)
+
+- **Data Segment**
+  - **Initialized Data**: global and static variables that are initialized in the program
+  - **Uninitialized Data (BSS)**: global and static variables that are declared but not initialized
+    - Example: `static int x;`
+  - Data segment is writable
+
+- **Heap**
+  - Used for dynamic memory allocation (e.g., `malloc`, `new`)
+  - Grows **upwards** (towards higher memory addresses) as needed
+  - Managed by the `brk()`/`sbrk()` system calls internally, or `mmap()`
+
+- **Stack**
+  - Stores function call frames (local variables, return addresses)
+  - Grows **downwards** (towards lower memory addresses)
+  - Managed automatically by the CPU and operating system
+
+- **Memory-mapped Segment**
+  - Region for memory-mapped files, shared libraries, or anonymous mappings (like large allocations via `mmap`)
+  - Placed between the heap and stack
+
+Typical layout (lower to higher memory addresses):
+
+```
+|---------------------------| 0x00000000 (low addresses)
+|         Text (Code)        |
+|---------------------------|
+|     Initialized Data      |
+|---------------------------|
+|   Uninitialized Data (BSS) |
+|---------------------------|
+|           Heap             |  <-- grows upwards
+|---------------------------|
+|   Memory-mapped region     |
+|---------------------------|
+|           Stack            |  <-- grows downwards
+|---------------------------| 0xFFFFFFFF (high addresses)
+```
+
+**Key Points**
+- Stack overflow and heap collision are possible if both grow into each other
+- ASLR (Address Space Layout Randomization) randomizes memory addresses to make exploitation harder
+- Shared libraries are loaded into memory-mapped regions
+- `/proc/[pid]/maps` shows the actual layout for a running process
+
 ## signal handling
 - In Linux, a signal is a kernel mechanism used to asynchronously notify a process that an event has occurred—such as an interrupt, fault, or termination request. Common examples include SIGINT (interrupt), SIGTERM (termination), and SIGKILL (force kill).
 - When a signal is sent (e.g., via kill or a hardware fault), the kernel marks it as pending for the target process. If the signal is unblocked, the kernel delivers it by interrupting the process's execution. Each signal has a default disposition—such as terminating the process or generating a core dump—but a process can override this using signal handlers (signal() or sigaction()), or block signals via signal masks to delay handling during critical sections.
