@@ -203,11 +203,34 @@ Sure, here’s the original explanation rewritten as a single compact list:
 - `/etc/NetworkManager` – stores DNS configs managed by NetworkManager  
 - `nmcli` – CLI tool to view or set DNS via NetworkManager
 
----
-
-## 🧠 Interview Soundbite
+## Interview Soundbite
 
 > "When resolving a domain, the OS contacts a recursive DNS resolver. If it’s not cached, the resolver walks the DNS hierarchy: root → TLD → authoritative. Once the IP is retrieved, it’s cached and used for TCP and TLS handshakes. Tools like `dig +trace` help diagnose resolution issues, and in secure environments, I’ve deployed DNS over TLS and validated DNSSEC signatures."
+
+## `/etc/hosts`
+
+`/etc/hosts` file is used for hostname resolution before querying DNS. The system determines whether to use it (and in what order) based on the **Name Service Switch (NSS)** configuration, found in `/etc/nsswitch.conf`.
+
+Look for the line:
+
+```
+hosts: files dns
+```
+
+This line means:
+
+- Check `/etc/hosts` first (`files`)
+- Then query DNS (`dns`) if no match is found
+
+### When `/etc/hosts` is used:
+- When resolving hostnames locally (e.g., for development, internal routing)
+- When `files` appears before `dns` in `nsswitch.conf`
+- If DNS is down or unavailable, and `/etc/hosts` contains the needed mapping
+
+### Practical uses:
+- Overriding DNS for specific domains (e.g., testing)
+- Defining names for internal or private IPs
+- Ensuring resolution for isolated systems with no DNS
 
 ---
 

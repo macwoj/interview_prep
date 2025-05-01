@@ -244,6 +244,32 @@ Example: `./long_task &`
 To suspend a running foreground job: press `Ctrl+Z`  
 To kill a job: `kill %1` (or use `kill PID`)  
 
+
+## Mutex
+
+In Linux, a **mutex (mutual exclusion)** works as a synchronization primitive to prevent **multiple threads** from accessing **critical sections** of code **simultaneously**.
+
+### How it works (internally and conceptually):
+
+- A **mutex has two states**: **locked** or **unlocked**.
+- **Lock** (`pthread_mutex_lock`):
+  - If unlocked: thread acquires it and continues.
+  - If locked: thread is blocked (put to sleep) until mutex becomes available.
+- **Unlock** (`pthread_mutex_unlock`):
+  - Releases the mutex.
+  - Wakes up one waiting thread (if any).
+
+### Under the hood:
+- Implemented using **futex (fast userspace mutex)** syscall:
+  - **Fast path**: locking/unlocking is done entirely in user space if no contention.
+  - **Slow path**: if contention occurs, kernel's `futex()` system call handles sleeping/waking threads.
+
+### Mutex types in `pthreads`:
+- **Normal**: no deadlock detection.
+- **Recursive**: same thread can re-lock.
+- **Error-checking**: returns error on deadlock.
+- Set using `pthread_mutexattr_settype`.
+
 # Pinning
 
 To pin a process to a specific CPU or set of CPUs in Linux, use the `taskset` command or `sched_setaffinity` system call.
