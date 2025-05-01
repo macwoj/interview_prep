@@ -12,6 +12,16 @@
 - **Congestion Control:** Algorithms like **TCP Reno**, **Cubic** detect and avoid network congestion.
 - **Streaming Protocol:** No message boundaries—application defines them.
 
+TCP suffers from **Head-of-Line (HOL) blocking** due to its **in-order delivery guarantee**. Here's a compact explanation:
+
+- TCP ensures bytes are delivered **in order** to the application.
+- If a packet is lost (e.g., segment 3), TCP holds **all later segments** (e.g., 4, 5, 6…) in the receive buffer until the missing one is **retransmitted and received**.
+- This delays delivery of data to the application, even though most data may have arrived.
+
+**Key implications**:
+- HOL blocking increases **latency**, especially over lossy or high-latency networks.
+- It can degrade performance in real-time applications (e.g., video streaming), which is why protocols like **QUIC/HTTP/3** avoid this by using **independent streams** over UDP.
+
 ### Interview Highlight:
 > "TCP ensures reliable delivery over an unreliable IP layer using mechanisms like retransmissions and congestion control. I’ve debugged packet loss by analyzing TCP retransmits in `tcpdump` and tuned window sizes for high-latency links."
 
@@ -91,6 +101,16 @@ Mutual TLS (mTLS) is an extension of the standard TLS (Transport Layer Security)
 - Runs over **QUIC** (UDP-based).
 - Avoids TCP HOL blocking, faster handshakes.
 - Encrypts all payloads and metadata (even headers).
+
+QUIC (Quick UDP Internet Connections) is a transport layer network protocol developed by Google and later standardized by the IETF. It was designed to improve performance and security over traditional TCP+TLS.
+
+Key features:
+
+- **Built on UDP**: Enables faster connection setup and avoids TCP head-of-line (HOL) blocking.
+- **Zero Round Trip Time (0-RTT)**: Supports faster connection resumption.
+- **TLS 1.3 encryption**: Encryption is built-in at the transport layer, reducing handshake steps.
+- **Multiplexed streams**: Multiple independent streams within a single connection, avoiding HOL blocking between streams.
+- **Connection migration**: Allows a connection to survive IP address changes (e.g., switching from Wi-Fi to mobile data).
 
 ## HTTPS
 

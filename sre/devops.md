@@ -173,4 +173,34 @@ For API-level request tracking (not app-level), audit logs show which API server
 
 ---
 
-Let me know if you want code examples for any of these (like NGINX Ingress, Fluent Bit, or OpenTelemetry in K8s).
+# SRE (Site Reliability Engineering) vs DevOps
+
+**1. Origin and Philosophy**
+- **SRE**: Coined by Google, SRE treats operations as a software engineering problem. It's grounded in engineering reliability into systems from the start.
+- **DevOps**: A cultural and collaborative movement promoting closer cooperation between development and operations teams to enable faster delivery.
+
+**2. Focus**
+- **SRE**: Focuses on **system reliability**, **incident response**, **SLOs/SLIs**, and **error budgets**. Reliability is a measurable, enforceable goal.
+- **DevOps**: Focuses on **automation**, **CI/CD**, **infrastructure as code**, and **cross-team collaboration**.
+
+**3. Metrics and Accountability**
+- **SRE**: Uses **Service Level Objectives (SLOs)** and **Error Budgets** to balance innovation vs reliability.
+- **DevOps**: Uses metrics like **deployment frequency**, **mean time to recovery (MTTR)**, and **change failure rate**.
+
+**4. Implementation**
+- **SRE**: Usually involves dedicated engineers with software backgrounds focused on ops tasks (monitoring, scaling, toil reduction).
+- **DevOps**: A broader cultural shift where dev and ops roles converge, sometimes without a dedicated "DevOps engineer" title.
+
+**5. Tooling**
+- Overlaps heavily (e.g., Kubernetes, Terraform, Prometheus), but:
+  - **SRE** emphasizes observability, alerting, and postmortems.
+  - **DevOps** emphasizes automation pipelines and seamless delivery.
+
+**6. Team Structure**
+- **SRE**: Often a distinct team partnering with product teams, enforcing reliability practices.
+- **DevOps**: More embedded in product teams or as a set of principles adopted across teams.
+
+**Summary**
+- SRE is an implementation of DevOps focused on reliability.
+- DevOps is a broader movement, while SRE provides concrete engineering practices.
+

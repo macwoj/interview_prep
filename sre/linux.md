@@ -400,7 +400,17 @@ Summary:
   - Each file/dir is identified by an inode number
   - Useful for checking hard links (same inode, different name/dir)
 
-# `PATH` and `LD_LIBRARY_PATH`:
+In Linux, the filename is **not stored inside the inode**. Instead:
+
+- **The filename is stored in the directory entry**, which maps a name to an inode number.
+- The **inode** stores metadata (permissions, timestamps, size, pointers to blocks), but **not the filename**.
+
+### Summary:
+
+- Directory: maps filenames to inode numbers
+- Inode: stores file metadata and data block pointers
+
+# `PATH` and `LD_LIBRARY_PATH` and `rpath`:
 
 ### `PATH`
 - Used by the **shell** (like `bash`, `zsh`) to locate **executables**
@@ -419,6 +429,31 @@ Summary:
   export LD_LIBRARY_PATH=/opt/mylibs/lib:$LD_LIBRARY_PATH
   ```
   This ensures `/opt/mylibs/lib/libexample.so` is found when an executable tries to load it
+
+### rpath
+
+In Linux, **`rpath`** (runtime library search path) is a way to embed library search paths directly into an ELF binary at link time. It tells the dynamic linker where to look for shared libraries **before** the standard system paths.
+
+### Key details:
+
+- Set during linking using:
+  ```bash
+  gcc -Wl,-rpath,/custom/lib myprog.c
+  ```
+- Stored in the ELF binary's **`.dynamic`** section.
+- The dynamic linker (`ld.so`) will use `rpath` when loading shared libraries.
+
+### Search order (simplified):
+1. `LD_LIBRARY_PATH` (env var)
+2. `rpath` (from the binary)
+3. Runpath (`--enable-new-dtags`)
+4. Default system paths (like `/lib`, `/usr/lib`)
+
+### Notes:
+- If both `rpath` and `runpath` are present, `runpath` is used instead.
+- `rpath` is considered less flexible than `runpath`, as it cannot be overridden by `LD_LIBRARY_PATH` in some linker configurations.
+
+Use `readelf -d binary` to inspect rpath/runpath entries.
 
 ### Key Differences
 - `PATH` is for finding **programs**
