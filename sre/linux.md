@@ -6,7 +6,13 @@
 
 # What happens internally when we type a command in the shell
 
-When you type a command in the shell, the shell first parses the input, performing expansions (like variables, command substitution, and globbing), and checks whether the command is a built-in, function, or an external executable. If it’s external, the shell searches for it in the directories listed in the $PATH environment variable. Once located, the shell creates a child process using fork(), and the child process replaces itself with the executable using exec(). Before execution, the shell sets up any necessary input/output redirection. The parent shell then waits for the child to finish unless the command is run in the background, and finally returns control to the user after collecting the command's exit status.
+- When you type a command in the shell, the shell first parses the input, performing expansions (like variables, command substitution, and globbing), 
+- checks whether the command is a built-in, function, or an external executable. (run help in shell to see all built in commands)
+- If it’s external, the shell searches for it in the directories listed in the $PATH environment variable. 
+- Once located, the shell creates a child process using fork(), and the child process replaces itself with the executable using exec(). 
+- Before execution, the shell sets up any necessary input/output redirection. 
+- The parent shell then waits for the child to finish unless the command is run in the background
+- finally returns control to the user after collecting the command's exit status.
 
 ## What Happens When You Type `ps` in Linux
 
