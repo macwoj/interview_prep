@@ -12,6 +12,19 @@
 - **Congestion Control:** Algorithms like **TCP Reno**, **Cubic** detect and avoid network congestion.
 - **Streaming Protocol:** No message boundaries—application defines them.
 
+### **TCP handshake**:
+
+- **Establish a reliable connection** between client and server
+- **Synchronize sequence numbers** used for data tracking
+- **Confirm that both sides are ready** to transmit and receive data
+
+It ensures both parties:
+- Agree on starting sequence numbers
+- Have open and reachable ports
+- Can establish a bidirectional communication path
+
+### Head-of-Line (HOL) blocking
+
 TCP suffers from **Head-of-Line (HOL) blocking** due to its **in-order delivery guarantee**. Here's a compact explanation:
 
 - TCP ensures bytes are delivered **in order** to the application.
@@ -22,8 +35,16 @@ TCP suffers from **Head-of-Line (HOL) blocking** due to its **in-order delivery 
 - HOL blocking increases **latency**, especially over lossy or high-latency networks.
 - It can degrade performance in real-time applications (e.g., video streaming), which is why protocols like **QUIC/HTTP/3** avoid this by using **independent streams** over UDP.
 
-### Interview Highlight:
-> "TCP ensures reliable delivery over an unreliable IP layer using mechanisms like retransmissions and congestion control. I’ve debugged packet loss by analyzing TCP retransmits in `tcpdump` and tuned window sizes for high-latency links."
+### ACK
+
+- **Delayed ACK**: Most TCP stacks use delayed ACKs to reduce overhead. Typically:
+  - ACK is sent **after every second full-sized segment**, or
+  - ACK is sent **within ~200ms** if no second packet arrives.
+
+- **Piggybacking**: If the receiver has data to send back, it **combines the ACK** with that data, avoiding a separate ACK packet.
+
+- **Out-of-order or missing packets**: Duplicate ACKs are sent **immediately** to help the sender detect loss.
+
 
 ---
 
@@ -37,19 +58,50 @@ ICMP (Internet Control Message Protocol) operates at the network layer and is us
 
 ## 🔹 **TLS (Transport Layer Security)**
 
-**Purpose:** Adds **confidentiality**, **integrity**, and **authentication** on top of TCP.
+Here’s a concise explanation of TLS (Transport Layer Security) suitable for an interview:
 
-### Key Concepts:
-- **Handshake Phase:**
-  - Negotiates **cipher suite**, **protocol version**.
-  - Performs **authentication** (usually server via certificate).
-  - Establishes **session keys** using asymmetric encryption (e.g., ECDHE).
-- **Record Protocol:** Encrypts data with symmetric encryption (AES, ChaCha20).
-- **Perfect Forward Secrecy:** Achieved via ephemeral key exchanges like ECDHE.
-- **TLS Termination:** Offloaded to load balancers in scalable setups.
+---
 
-### Interview Highlight:
-> "TLS protects data in transit. I’ve configured mutual TLS between services and used tools like `openssl s_client` to debug cert issues and handshake failures."
+**TLS (Transport Layer Security)** is a cryptographic protocol that provides secure communication over a network, commonly used in HTTPS.
+
+**Goals of TLS:**
+- **Confidentiality**: Encrypts data to prevent eavesdropping
+- **Integrity**: Ensures data is not altered (via MAC or AEAD)
+- **Authentication**: Verifies identity (typically using X.509 certificates)
+
+**Key Components:**
+- **Handshake Protocol**: Negotiates encryption algorithms and establishes keys
+- **Record Protocol**: Transmits data securely using the negotiated keys
+- **Certificates**: Used to authenticate the server (and optionally the client)
+
+**TLS Handshake (simplified):**
+1. **ClientHello**: Client sends supported TLS versions, cipher suites, and a random number
+2. **ServerHello**: Server responds with chosen version, cipher, and its certificate
+3. **Key Exchange**: Client and server derive shared secret (e.g., via ECDHE)
+4. **Finished**: Both sides confirm handshake and begin encrypted communication
+
+**Common Algorithms Used:**
+- Key exchange: ECDHE
+- Encryption: AES-GCM
+- MAC/Authentication: HMAC or AEAD
+- Certificate: RSA or ECDSA
+
+**TLS Versions:**
+- TLS 1.2: Still widely used
+- TLS 1.3: Faster, more secure (fewer round trips, removes legacy algorithms)
+
+### SNI
+
+SNI (Server Name Indication) is an extension to the TLS (Transport Layer Security) protocol that allows a client (like a web browser) to specify the hostname it's trying to connect to during the TLS handshake.
+
+This is useful when multiple domains are hosted on the same IP address (virtual hosting). Without SNI, the server wouldn't know which TLS certificate to present if it hosts multiple SSL/TLS-secured domains.
+
+Key points:
+
+- Enables hosting multiple HTTPS sites on a single IP address.
+- Sent in plaintext during the initial handshake (so intermediaries can still see the hostname).
+- Widely supported in modern clients and servers.
+
 
 ## Mutual TLS
 
@@ -102,6 +154,8 @@ Mutual TLS (mTLS) is an extension of the standard TLS (Transport Layer Security)
 - Avoids TCP HOL blocking, faster handshakes.
 - Encrypts all payloads and metadata (even headers).
 
+### QUIC
+
 QUIC (Quick UDP Internet Connections) is a transport layer network protocol developed by Google and later standardized by the IETF. It was designed to improve performance and security over traditional TCP+TLS.
 
 Key features:
@@ -111,6 +165,71 @@ Key features:
 - **TLS 1.3 encryption**: Encryption is built-in at the transport layer, reducing handshake steps.
 - **Multiplexed streams**: Multiple independent streams within a single connection, avoiding HOL blocking between streams.
 - **Connection migration**: Allows a connection to survive IP address changes (e.g., switching from Wi-Fi to mobile data).
+
+### HTTP redirect
+
+- A 3xx status code (e.g. 301, 302, 307)
+- A `Location` header with the new URL
+- An optional response body (often just a message or HTML link)
+
+Example of a `302 Found` redirect:
+
+```
+HTTP/1.1 302 Found
+Location: https://example.com/newpage
+Content-Length: 0
+```
+
+Or with a basic HTML body:
+
+```
+HTTP/1.1 301 Moved Permanently
+Location: https://example.com/newpage
+Content-Type: text/html
+
+<html>
+  <head><title>Moved</title></head>
+  <body>
+    <h1>Moved Permanently</h1>
+    <p>Redirecting to <a href="https://example.com/newpage">https://example.com/newpage</a></p>
+  </body>
+</html>
+```
+
+### HTTP GET breakdown
+
+In an HTTP GET request, there are **two main parts**:
+
+1. **Request line and headers**
+2. **Body (content)** — which is usually empty in a GET request
+
+Here’s a breakdown:
+
+### 1. Request line and headers (this is the **header section**)
+
+```
+GET /index.html HTTP/1.1          ← Request line: method, path, and version
+Host: www.example.com             ← Required header (for HTTP/1.1)
+User-Agent: curl/7.68.0           ← Identifies the client software
+Accept: */*                       ← What content types the client accepts
+```
+
+Each header is in the form:
+```
+Header-Name: value
+```
+
+The **headers end with a blank line** (`\r\n\r\n`), which signals the start of the body.
+
+---
+
+### 2. Content/body (usually empty for GET)
+
+```
+<empty>
+```
+
+Since GET is used to **retrieve** resources, it typically doesn't send a body. Only methods like `POST` or `PUT` include content.
 
 ## HTTPS
 
@@ -131,6 +250,49 @@ Sure, here’s the original explanation rewritten as a single compact list:
   - Encrypted communication begins using symmetric encryption (e.g. AES)
 - Asymmetric encryption (RSA, ECDSA) is used only during the handshake for key exchange and authentication
 - Symmetric encryption (AES, ChaCha20) is used for the actual data transfer due to its speed and efficiency
+
+---
+
+## BGP
+
+For an interview, give a concise and clear answer like this:
+
+---
+
+**BGP (Border Gateway Protocol)** is the **standard routing protocol of the internet**, used to **exchange routing information between autonomous systems (ASes)**. It's a **path-vector protocol** that determines the best path to a destination based on policies and attributes like AS-path length, local preference, and MED (multi-exit discriminator).
+
+BGP enables internet service providers and large networks to control **how traffic enters and exits their networks**. It supports route filtering, traffic engineering, and load balancing, and is critical for ensuring **global internet reachability**.
+
+---
+
+You can optionally add:
+
+> For example, global DNS resolvers like Google’s `8.8.8.8` use BGP with Anycast to advertise the same IP from many locations, so users get routed to the nearest instance.
+
+BGP, DNS, and Anycast often work **together** to provide **fast, resilient, and globally distributed DNS services**.
+
+### How They Work Together:
+
+- **Anycast IPs for DNS**:
+  - DNS providers (e.g. Cloudflare, Google, OpenDNS) assign the **same IP** (e.g. `8.8.8.8`) to multiple DNS servers around the world.
+  
+- **BGP Advertisement**:
+  - Each server (in a different location or data center) **advertises that IP using BGP** to the internet.
+  - Routers choose the **"closest" server** based on BGP path metrics.
+
+- **Client DNS Request**:
+  - When a client queries the DNS server at `8.8.8.8`, **BGP routes the traffic to the nearest server**.
+  - That DNS server handles the request, reducing latency and distributing load.
+
+- **Resilience**:
+  - If one server or region fails, BGP automatically withdraws the route.
+  - Traffic is **re-routed to the next nearest healthy DNS server**.
+
+### Summary:
+
+- **Anycast** makes many servers appear as one.
+- **BGP** ensures each user is routed to the nearest available server.
+- **DNS** benefits from this setup with **fast response times**, **high availability**, and **DDoS resilience**.
 
 ---
 

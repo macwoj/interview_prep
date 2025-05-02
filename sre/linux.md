@@ -159,6 +159,48 @@ Typical layout (lower to higher memory addresses):
 
 Use with `ps`, `top`, or `pgrep` to find PIDs.
 
+### 1. Use `signal()` or `sigaction()`
+- `signal()` is simpler but less reliable (not async-signal-safe).
+- `sigaction()` is preferred for robustness and fine-grained control.
+
+### 2. Example using `sigaction()`
+
+```c
+#include <stdio.h>
+#include <signal.h>
+#include <unistd.h>
+
+void handler(int signum) {
+    printf("Caught signal %d\n", signum);
+}
+
+int main() {
+    struct sigaction sa;
+    sa.sa_handler = handler;
+    sa.sa_flags = 0; // or SA_RESTART
+    sigemptyset(&sa.sa_mask);
+
+    sigaction(SIGINT, &sa, NULL); // Handle Ctrl+C (SIGINT)
+
+    while (1) {
+        printf("Running...\n");
+        sleep(1);
+    }
+    return 0;
+}
+```
+
+### 3. Important Notes
+- Use `sigemptyset()` and `sigaddset()` to manage signal masks.
+- Use `sigprocmask()` to block/unblock signals in critical sections.
+- Async-signal-safe functions (e.g. `write`, `_exit`) must be used in handlers.
+
+### 4. Common signals
+- `SIGINT`: Ctrl+C
+- `SIGTERM`: termination request
+- `SIGKILL`: cannot be caught or ignored
+- `SIGCHLD`: child process stopped or terminated
+
 ## thread vs process
 - **Process**: A process is an independent program in execution with its own memory space, file descriptors, and system resources. Each process has a unique **PID** (Process ID) and is managed by the kernel. Processes don’t share memory unless explicitly set up via inter-process communication (IPC).
 
@@ -275,6 +317,44 @@ In Linux, a **mutex (mutual exclusion)** works as a synchronization primitive to
 - **Recursive**: same thread can re-lock.
 - **Error-checking**: returns error on deadlock.
 - Set using `pthread_mutexattr_settype`.
+
+
+# Namespaces
+
+Linux namespaces are a kernel feature that isolate and virtualize system resources for a set of processes. Each namespace provides a separate instance of a global resource, making it appear as though each process has its own independent copy.
+
+The main namespace types are:
+
+- `pid`: Isolates process IDs, so processes in different namespaces can have the same PID.
+- `mnt`: Isolates the filesystem mount points, enabling different views of the filesystem hierarchy.
+- `net`: Isolates network interfaces, IP addresses, routing tables, etc.
+- `uts`: Isolates hostname and domain name.
+- `ipc`: Isolates System V IPC and POSIX message queues.
+- `user`: Isolates user and group IDs (UIDs and GIDs).
+- `cgroup`: Isolates access to control groups.
+
+-  Namespaces are the core building blocks of containers, allowing tools like Docker to create isolated environments. They can be combined with cgroups and chroot for secure process sandboxing.
+
+The Linux kernel tracks namespace membership per process. Each process can belong to one namespace of each type (e.g., one PID namespace, one net namespace, etc.).
+
+- When a process is created using `clone()`, `unshare()`, or `setns()`, it can join or create new namespaces.
+
+- Inside a new namespace, the kernel provides an isolated view of that resource:
+  - In a **PID namespace**, `ps` will only show processes within that namespace.
+  - In a **net namespace**, only the virtual network interfaces and routing tables created in that namespace are visible.
+  - In a **mnt namespace**, processes can mount or unmount filesystems without affecting others.
+
+- Namespaces are reference-counted and live as long as at least one process is using them.
+
+- The kernel uses namespace-specific structures internally to redirect syscalls (e.g., when listing interfaces, it checks the calling process's net namespace).
+
+Example:
+```c
+clone(CLONE_NEWNET | CLONE_NEWPID | SIGCHLD, child_stack);
+```
+This would start a child process in a new network and PID namespace.
+
+In containers (like Docker), each container gets its own namespaces so it behaves like an isolated system.
 
 # Pinning
 
@@ -542,7 +622,25 @@ This design ensures that bugs or vulnerabilities in user applications are contai
 - When a process accesses memory, the virtual address is translated to a physical address by the **Memory Management Unit (MMU)** using **page tables**.
 - If the page is not in RAM, a **page fault** occurs and the OS loads it from disk (swap) into memory.
 
-In short, virtual memory allows efficient and secure use of memory by abstracting physical memory and using disk as an extension when needed.
+## Page faults
+
+In Linux, page faults occur when a process accesses a part of its virtual memory that is not currently mapped to physical memory. There are two types:
+
+### Major Page Faults
+- Occur when the page **is not in RAM** and must be **loaded from disk** (e.g., from swap space or a file).
+- Costly due to disk I/O.
+- Example: Accessing part of a memory-mapped file not yet read into RAM.
+
+### Minor Page Faults
+- Occur when the page **is already in RAM** but not yet mapped into the process's page table.
+- The kernel just needs to update the page table—**no disk access** is required.
+- Example: Copy-on-write page setup after `fork()`.
+
+You can monitor them using tools like:
+```bash
+vmstat -s
+cat /proc/[pid]/stat   # fields 10 and 12: minor and major faults
+```
 
 # NFS
 
